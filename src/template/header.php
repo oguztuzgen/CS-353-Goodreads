@@ -18,7 +18,10 @@
 	?>
 </ul>
 
-<div class="header navbar-fixed">
+
+<!-- TODO FOR EVERY PAGE ADD CLOSING BODY TAG TO THE END -->
+
+<body class="header navbar-fixed">
 	
 	<nav class="header">
 		<div class="brand nav-wrapper" style="width: 90%; height: 90%; padding: 5px; margin:auto;">
@@ -47,7 +50,7 @@
 
 		</div>
 	</nav>
-</div>	
+<!-- </div>	 -->
 
 <script>
 		document.addEventListener('DOMContentLoaded', function() {

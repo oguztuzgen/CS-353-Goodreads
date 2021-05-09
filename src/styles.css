@@ -19,6 +19,12 @@
 	font-weight: bold;
 }
 
+.brand-text-alt {
+	color: #E4FCFF;
+	font-size: 24px;
+	font-family: Oswald;
+}
+
 .header {
 	background-color: #3B4252;
 }
@@ -46,6 +52,12 @@
 	font-family: Oswald;
 }
 
+.brand-btn {
+	color: #473335;
+	background: #AAD5FF;
+	font-family: Oswald;
+}
+
 nav {
 	height: 10%;
 	padding-top: 5px;
@@ -53,6 +65,12 @@ nav {
 
 body {
 	background-color: #3b4251;
+}
+
+input[type=text] {
+	color: #473335;
+	background-color: #AAD5FF;
+	font-family: Oswald;
 }
 
 /* .center {
