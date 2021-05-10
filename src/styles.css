@@ -73,14 +73,6 @@ input[type=text] {
 	font-family: Oswald;
 }
 
-/* .center {
-	margin: auto;
-	width: 100%;
-	border: 3px solid #62768e;
-	padding: 10px;
-	background-color: #a9d4fe;
-} */
-
 td {
 	width: 10%;
 	text-align:center;
@@ -97,19 +89,69 @@ a {
 	text-decoration: none;
 }
 
+.button {
+	background-color: #7fa1bf;
+	border: solid;
+	border-width: thick;
+	border-color: #7fa1bf;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	/* margin: 4px 2px; */
+	cursor: pointer;
+}
+
+.centertable {
+	margin-left: auto;
+	margin-right: auto;
+	border-collapse: separate;
+}
+
+/* ! BURADA HATA */
+.center1 {
+	margin: auto;
+	width: 75%;
+	border: 3px solid #62768e;
+	padding: 10px;
+	background-color: #a9d4fe;
+	text-align: center;
+}
+
+body {
+	background-color: #3b4251;
+}
+
+td {
+	width: 10%;
+	text-align:center;
+	/* border: 1px solid black; */
+}
+
 h1 {
-	font-family: Comic sans ms;
+	font-family: 'Oswald', sans-serif;
+}
+
+.logs{
+	border: 3px solid #62768e;
+	padding: 10px;
+	background-color: #a9d4fe;
+	text-align: center;
+	margin:auto;
 }
 
 .text {
-	font-family: Comic sans ms;
+	font-family: 'Oswald', sans-serif;
 	font-size: 16px;
-	color: white;
 }
 
-.button {
-	padding:15px 32px;
-	display: inline-block;
-	font-size: 32px;
-	text-align: center;
+.brand-anan {
+	margin-top: 15px;
+	padding: 10px;
+	width: 50%;
+	height: 40%;
+	background-color:#7fa1bf;
+	border-color: white;
 }
