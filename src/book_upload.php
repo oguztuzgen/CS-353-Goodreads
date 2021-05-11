@@ -1,11 +1,15 @@
 <?php
-// TODO HANDLE POST REQUEST
+// TODO ADD GENRE FROM BOOK UPLOAD
+
 
 // initialize session var and connect to db
 require('template/header.php');
 
-$errors = array('book_author' => '', 'book_description' => '', 'page_count' => '', 'published_month_year' => '', 'book_isbn' => '');
-$book_title = $book_author = $book_description = $page_count = $published_month_year = $book_isbn = $book_language = "";
+$allowed_extensions = array('jpg', 'jpeg', 'png');
+$image_error = ""; 
+
+$errors = array('book_title' => '', 'book_author' => '', 'book_description' => '', 'page_count' => '', 'published_month_year' => '', 'book_isbn' => '');
+$book_title = $book_author = $book_description = $page_count = $published_month_year = $book_isbn = $book_language = $upload_path = "";
 $submit_param = array_keys($errors);
 
 if (isset($_POST['submit'])) {
@@ -20,31 +24,62 @@ if (isset($_POST['submit'])) {
 		$errors['page_count'] = "Please enter a valid integer";
 	}
 
+	if (isset($_FILES['image'])) {
+		$img_name = $_FILES['image']['name'];
+		$img_size = $_FILES['image']['size'];
+		$tmp_name = $_FILES['image']['tmp_name'];
+		$error = $_FILES['image']['error'];
+
+		if ($error === 0) {
+			if ($img_size > 125000) {
+				$image_error = "File too large";
+				$upload_path = '../image/cover_placeholder.png';
+			} else {
+				$img_ex = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
+				if (in_array($img_ex, $allowed_extensions)) {
+					$img_name_redux = uniqid("IMG-", true) . '.' . $img_ex;
+					$upload_path = 'uploads/' . $img_name_redux;
+					move_uploaded_file($tmp_name, $upload_path);
+					// Get all the submitted data from the form
+				} else {
+					$image_error = "Wrong extension type (should be .jpg, .jpeg, .png)";
+					$upload_path = '../image/cover_placeholder.png';
+				}
+			}
+		} else {
+			$upload_path = '../image/cover_placeholder.png';
+		}
+	} else {
+		$upload_path = '../image/cover_placeholder.png';
+	}
+
 	// TODO EDITION EKLE BURAYA
 
 	$book_title = mysqli_real_escape_string($conn, $_POST["book_title"]);
 	$book_author = mysqli_real_escape_string($conn, $_POST["book_author"]);
 	$book_description = mysqli_real_escape_string($conn, $_POST["book_description"]);
 	$page_count = mysqli_real_escape_string($conn, $_POST["page_count"]);
-	$published_month_year = mysqli_real_escape_string($conn, $_POST["published_month_year"]);
+	$published_month_year = mysqli_real_escape_string($conn, $_POST["published_month_year"]) . "-01";
 	$book_isbn = mysqli_real_escape_string($conn, $_POST["book_isbn"]);
 	$book_genres = mysqli_real_escape_string($conn, $_POST["book_genres"]);
 	$book_language = mysqli_real_escape_string($conn, $_POST["language_picker"]);
 
-	if (!array_filter($errors)) {
+	if (!array_filter($errors) && empty($error_message)) {
 		// TODO EKLEYEN USERA GORE VERIFIED AYARLA
 		// TODO ORIGINAL TITLE
-		$sql = "insert into book(book_isbn, title, author, date_published, book_edition, page_count, rating, verified, view_count, language, original_title)
-			VALUES('$book_isbn', '$book_title', '$book_author', '$published_month_year', 1, '$page_count', 0, 0, 0, '$book_language', '$book_title');";
+		$sql = "insert into book(book_isbn, title, author, date_published, book_edition, page_count, rating, verified, view_count, language, original_title, book_cover)
+			VALUES('$book_isbn', '$book_title', '$book_author', '$published_month_year', 1, '$page_count', 0, 0, 0, '$book_language', '$book_title', '$upload_path');";
+
+		echo $upload_path . "<br>" . $sql;
 		if (mysqli_query($conn, $sql)) {
 			mysqli_close($conn);
 			header('Location: index.php');
+
 		} else {
 			echo "SQL ERROR: " . mysqli_error($conn);
 		}
 	}
 }
-
 ?>
 
 
@@ -52,24 +87,11 @@ if (isset($_POST['submit'])) {
 <html>
 
 <div class=" brand-dark" style="padding: 150px 7%;">
-	<form action="book_upload.php" method="POST">
+	<form action="book_upload.php" method="POST" enctype="multipart/form-data">
 		<div class="row">
 			<div class="col s3">
 				<img src="../image/cover_placeholder.png" style="margin: 5px; margin-top:20px;" width="127" height="145">
-				<form method="POST" action="file.php" enctype="multipart/form-data">
-					<input type="file" name="image"/>
-					<input type="submit" name="upload" value="upload">
-				</form>
-
-				<!-- <div class="file-field input-field">
-					<div class="btn brand-btn">
-						<span>Upload</span>
-						<input type="file">
-					</div>
-					<div class="brand file-path-wrapper" style="margin: 5px;">
-						<input class="file-path validate" type="text">
-					</div>
-				</div> -->
+					<input type="file" name="image" id="image">
 
 			</div>
 
