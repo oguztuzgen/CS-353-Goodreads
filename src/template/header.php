@@ -1,19 +1,21 @@
 <?php
 	require('style.php');
+	session_start();
+
 ?>
 
 <ul id="dropdown1" class="dropdown-content">
-	<?php 
-		$_SESSION['name'] = "Eray1"; // !!! DEBUG DELETE
-
+	<?php
 		if (isset($_SESSION['name'])) { // ! ALSO HERE LOG IN INFO IS CHECKED
+			$this_file = htmlspecialchars('<?php echo $_SERVER["PHP_SELF"];?>');
+
 			echo "<li><a href=\"#\" class=\"nav-btn\">Friends</a></li>";
 			echo "<li><a href=\"#\" class=\"nav-btn\">Reading Challenges</a></li>";
 			echo "<li><a href=\"#\" class=\"nav-btn\">Upload a book</a></li>";
-			echo "<li><a href=\"#\" class=\"nav-btn\">Log out</a></li>";
+			echo "<li><a href=\"logout.php\" id=\"logout\" class=\"nav-btn\">Log out</a></li>";
 		} else {
-			echo "<li><a href=\"#\">Login</a></li>";
-			echo "<li><a href=\"#\">Register</a></li>";
+			echo "<li><a href=\"login.php\">Login</a></li>";
+			echo "<li><a href=\"login.php\">Register</a></li>";
 		}
 	?>
 </ul>
