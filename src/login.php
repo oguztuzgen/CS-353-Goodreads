@@ -1,11 +1,10 @@
   <?php
-	session_start();
-	require('db/db_connect.php');
+	require('template/config.php');
 
 	$login = 0;
 
-	if (isset($_POST['login']))
-	{
+	// TODO ERRORLARI YERLERINDE GOSTER
+	if (isset($_POST['login'])) {
 		$email = $_POST['email'];
 		$password = $_POST['password'];
 
@@ -41,7 +40,6 @@
 		}
 	}
 
-
 	$register_email = $register_password = $register_name = $register_surname = $register_bdate = "";
 	$errors = array('register_password' => '', 'register_email' => '', 'register_name' => '', 'register_surname' => '', 'register_bdate' => '');
 
@@ -51,38 +49,43 @@
 	);
 
 	if (isset($_POST['register'])) {
-		echo $_POST["register_email"] . " " . $_POST["register_password"] . " ";
-		
-		foreach ($check_register_param as $param) {
-			if (empty($_POST[$param])) {
-				$errors[$param] = "This field is required <br>";
+		$register_email = $register_password = $register_name = $register_surname = $register_bdate = "";
+		$errors = array('register_password' => '', 'register_email' => '', 'register_name' => '', 'register_surname' => '', 'register_bdate' => '');
+
+		$check_register_param = array(
+			'0' => 'register_email', '1' => 'register_password',
+			'2' => 'register_name', '3' => 'register_surname','4' => 'register_bdate'
+		);
+
+		// retrieve from post request
+		foreach ($check_register_param as $param => $value) {
+			if (empty($_POST[$value])) {
+				$errors[$value] = "This field is required <br>";
 			}
 		}
 
-		if (!filter_var($register_email, FILTER_VALIDATE_EMAIL)) {
+		if (!filter_var($_POST['register_email'], FILTER_VALIDATE_EMAIL)) {
 			$errors['register_email'] = "Email invalid <br>";
 		}
+		
+		// print_r($errors);
+
+		$register_email = mysqli_real_escape_string($conn, $_POST["register_email"]);
+		$register_password = mysqli_real_escape_string($conn, $_POST["register_password"]);
+		$register_name = mysqli_real_escape_string($conn, $_POST["register_name"]);
+		$register_surname = mysqli_real_escape_string($conn, $_POST["register_surname"]);
+		$register_bdate = mysqli_real_escape_string($conn, $_POST["register_bdate"]);
 
 		if (!array_filter($errors)) {
-			echo "DUMB DUMB SUM TING WONG ";
-			// if there are no errors on register form
-	
-			$register_email = mysqli_real_escape_string($conn, $_POST["register_email"]);
-			$register_password = mysqli_real_escape_string($conn, $_POST["register_password"]);
-			$register_name = mysqli_real_escape_string($conn, $_POST["register_name"]);
-			$register_surname = mysqli_real_escape_string($conn, $_POST["register_surname"]);
-			$register_bdate = mysqli_real_escape_string($conn, $_POST["register_bdate"]);
-	
-			echo $register_email . " " . $register_password . " ";
-      
-			$sql = "INSERT INTO user(email, pass, first_name, last_name ,birth_date) VALUES('$register_email', '$register_password', '$register_name', '$register_surname', '$register_bdate')";
-			echo "DUMB DUMB I did it ";
-	
+			$sql = "insert into user(email, pass, first_name, last_name, birth_date) VALUES('$register_email', '$register_password','$register_name', '$register_surname', '$register_bdate');";
+			echo $sql;
 			if (mysqli_query($conn, $sql)) {
+				
 				mysqli_close($conn);
 				$_SESSION['login'] = 1;
 				$_SESSION['email'] = $register_email;
 				$_SESSION['password'] = $register_password;
+				$_SESSION['name'] = $register_name;
 				header('Location: index.php');
 			} else {
 				echo "DUMB DUMB SUM TING WONG " . mysqli_error($conn);
@@ -161,7 +164,7 @@
   							<p style="text-decoration:underline; text-align:left; margin-left:29%;">Birth Day</p>
 
   							<div class="input-field" style="width:40.5%; margin-left:29%; ">
-  								<input type="text" class="datepicker text" id="register_bdate" style="background-color:#7fa1bf; border-color: white; padding:12px;">
+  								<input type="text" class="datepicker text" name="register_bdate" id="register_bdate" style="background-color:#7fa1bf; border-color: white; padding:12px;">
   							</div>
   							<br>
   							<input type="submit" name="register" id="register" value="Register" style="padding: 15px; background-color:#7fa1bf;" class="text">
@@ -199,7 +202,10 @@
   	<script>
   		$(document).ready(function() {
   			$('.datepicker').datepicker({
-
+				defaultDate: new Date(2000,1,31),
+    			maxDate: new Date(2015,12,31),
+    			yearRange: [1928, 2015],
+    			format: "yyyy-mm-dd"
 
   			});
   		});

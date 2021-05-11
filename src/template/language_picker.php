@@ -1,5 +1,5 @@
 <?php
-echo '<select data-placeholder="Choose a Language...">
+echo '<select name="language_picker" data-placeholder="Choose a Language...">
 	<option value="" disabled selected>Choose a language</option>
 	<option value="AF">Afrikaans</option>
   <option value="SQ">Albanian</option>

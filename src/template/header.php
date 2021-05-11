@@ -1,7 +1,6 @@
 <?php
 	require('style.php');
-	session_start();
-
+	require('config.php');
 ?>
 
 <ul id="dropdown1" class="dropdown-content">
@@ -33,10 +32,23 @@
 			</div>
 
 			<ul class="center" style="float: right;">
-				<li><a href="index.php" class="nav-btn">Home</a></li>
-				<li><a href="index.php" class="nav-btn">My Books</a></li>
+
+			<li><a href="index.php" class="nav-btn">Home</a></li>
 				<li><a href="index.php" class="nav-btn">Browse</a></li>
-				<li><a class="dropdown-trigger nav-btn" href="#!" data-target="dropdown1"> 
+
+			<?php
+			// $_SESSION['name'] = "yarro eray";
+
+				if (isset($_SESSION['name'])) { // ! ALSO HERE LOG IN INFO IS CHECKED
+					$this_file = htmlspecialchars('<?php echo $_SERVER["PHP_SELF"];?>');
+					echo "<li><a href=\"index.php\" class=\"nav-btn\">My Books</a></li>";
+					echo "<li><a href=\"book_upload.php\" class=\"nav-btn\">Upload a book</a></li>";
+				}
+			?>
+			<li><a class="dropdown-trigger nav-btn" href="#!" data-target="dropdown1"> 
+
+
+				
 					<?php
 
 						if (isset($_SESSION['name'])) {
