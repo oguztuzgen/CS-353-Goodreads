@@ -1,13 +1,15 @@
 <?php
 	require('style.php');
 	require('config.php');
+	$uid = $_SESSION['user_id'];
+
 ?>
 
 <ul id="dropdown1" class="dropdown-content">
 	<?php
 		if (isset($_SESSION['name'])) { // ! ALSO HERE LOG IN INFO IS CHECKED
 			$this_file = htmlspecialchars('<?php echo $_SERVER["PHP_SELF"];?>');
-
+			echo "<li><a href=\"profile.php?uid=$uid\" class=\"nav-btn\">Profile</a></li>";
 			echo "<li><a href=\"#\" class=\"nav-btn\">Friends</a></li>";
 			echo "<li><a href=\"#\" class=\"nav-btn\">Reading Challenges</a></li>";
 			echo "<li><a href=\"#\" class=\"nav-btn\">Upload a book</a></li>";

@@ -31,7 +31,7 @@ if (isset($_POST['submit'])) {
 		$error = $_FILES['image']['error'];
 
 		if ($error === 0) {
-			if ($img_size > 125000) {
+			if ($img_size > 2125000) {
 				$image_error = "File too large";
 				$upload_path = '../image/cover_placeholder.png';
 			} else {
@@ -61,17 +61,32 @@ if (isset($_POST['submit'])) {
 	$page_count = mysqli_real_escape_string($conn, $_POST["page_count"]);
 	$published_month_year = mysqli_real_escape_string($conn, $_POST["published_month_year"]) . "-01";
 	$book_isbn = mysqli_real_escape_string($conn, $_POST["book_isbn"]);
-	$book_genres = mysqli_real_escape_string($conn, $_POST["book_genres"]);
+	// $book_genres = mysqli_real_escape_string($conn, $_POST["book_genres"]);
 	$book_language = mysqli_real_escape_string($conn, $_POST["language_picker"]);
 
 	if (!array_filter($errors) && empty($error_message)) {
 		// TODO EKLEYEN USERA GORE VERIFIED AYARLA
 		// TODO ORIGINAL TITLE
-		$sql = "insert into book(book_isbn, title, author, date_published, book_edition, page_count, rating, verified, view_count, language, original_title, book_cover)
-			VALUES('$book_isbn', '$book_title', '$book_author', '$published_month_year', 1, '$page_count', 0, 0, 0, '$book_language', '$book_title', '$upload_path');";
+		$sql = "insert into book(book_isbn, title, author, description, date_published, book_edition, page_count, rating, verified, view_count, language, original_title, book_cover)
+			VALUES('$book_isbn', '$book_title', '$book_author', '$book_description', '$published_month_year', 1, '$page_count', 0, 0, 0, '$book_language', '$book_title', '$upload_path');";
 
 		echo $upload_path . "<br>" . $sql;
 		if (mysqli_query($conn, $sql)) {
+
+			$sql = "SELECT book_id FROM book WHERE book_isbn=\"$book_isbn\" and title=\"$book_title\" and author=\"$book_author\"";
+			$book_id = mysqli_query($conn, $sql);
+			$book_id = mysqli_fetch_assoc($book_id);
+			$book_id = $book_id['book_id'];
+			$sql = "INSERT INTO has_genre(book_id, genre_id) VALUES";
+			foreach ($_POST['book_genres'] as $gnr) {
+				$sql = $sql . "($book_id, $gnr),";
+			}
+			$sql = substr($sql, 0, -1);
+			$sql = $sql . ";";
+
+			mysqli_query($conn, $sql);
+
+
 			mysqli_close($conn);
 			header('Location: index.php');
 
@@ -101,8 +116,9 @@ if (isset($_POST['submit'])) {
 				<div class="col s12">
 					<input type="text" name="book_title" style="float: left; margin-top: 15px; padding: 10px; width: 100%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text brand-anan" placeholder="Book Title">
 					<input type="text" name="book_author" style="float: left; margin-top: 15px; padding: 10px; width: 100%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="Author">
-					<input type="text" name="book_description" style="float: left; margin-top: 15px; padding: 10px; width: 100%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="Description">
-
+					<textarea name="book_description" style="float: left; margin-top: 15px; padding: 10px; width: 100%; height: 100%; background-color:#7fa1bf; border-color: white;" class="text"></textarea>
+<!-- <input type="text" name="book_description" style="float: left; margin-top: 15px; padding: 10px; width: 100%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="Description"> -->
+					
 					<div class="col s12">
 						<div class="col s6">
 							<input type="text" name="page_count" style="font-size: 14px; float: left; margin-top: 15px; padding: 10px; width: 50%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="Page count">
@@ -114,7 +130,7 @@ if (isset($_POST['submit'])) {
 
 					<input type="text" name="book_isbn" style="font-size: 14px; float: left; margin-top: 15px; padding: 10px; width: 40%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="ISBN">
 					<div class="input-field col s12">
-						<select multiple name="book_genres">
+						<select multiple name="book_genres[]">
 							<option value="" disabled selected>Choose your option</option>
 
 							<?php

@@ -57,7 +57,6 @@ if (isset($_GET['ordek_x'])) {
           <div class="text" style="margin-top: 5%; margin-left: 5%;">
             AVAILABLE FILTERS:<br><br>
 
-            <!-- <form action="" method="POST"> -->
             <?php
             $sql = "SELECT * FROM genre;";
 
@@ -89,31 +88,25 @@ if (isset($_GET['ordek_x'])) {
         <td style="width: 1.5%;"></td>
 
         <td style="width: 40%; background-color: #80A1C0;">
-          <div class="row text">
-            <div class="col s4">
-              <h4>Cover</h4>
-            </div>
-
-            <div class="col s4">
-              <h4>Title</h4>
-            </div>
-
-            <div class="col s4">
-              <h4>Author</h4>
-            </div>
-          </div>
 
           <?php
           if ($_SERVER["REQUEST_METHOD"] == "POST" ||  $flag == 0) {
             //echo $_POST['search_bar'];
             $flag = 1;
             global $search;
-            // error_reporting(0);
+            error_reporting(0); // delete this in case of a problem
 
             $search = $_POST['search_bar'];
             //$genrebar = $_POST['genr'];
 
-
+						echo "
+							<table>
+							<tr>
+								<th class=\"center\">Cover</th>
+								<th class=\"center\">Title</th>
+								<th class=\"center\">Author</th>
+							</tr>
+						";
 
             $query = "select book_cover,title,author,book_id from book";
 
@@ -121,14 +114,17 @@ if (isset($_GET['ordek_x'])) {
 
             while ($books = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
-              $title = $books['title'];
-              $author = $books['author'];
+              $title = strtolower($books['title']);
+              $author = strtolower($books['author']);
+							$search = strtolower($search);
 
               if (strpos($title, $search) !== false || strpos($author, $search) !== false) {
 
-                echo "<div class='row text'>";
+                // echo "<div class='row text'>";
+								echo "<tr>";
+								echo "<td>";
 
-                echo "<div class='col s4' style=''>";
+                // echo "<div class='col s4' style=''>";
 								
 								$cover = $books['book_cover'];
 
@@ -141,29 +137,32 @@ if (isset($_GET['ordek_x'])) {
                                   </div>';
 
 
-                echo "</div>";
+                echo "</td>";
+                // echo "</div>";
 
                 
 
-                echo "<div class='col s4' style='margin-top: 75px;'> 
+                // echo "<div class='col s4' style='margin-top: 75px;'> 
+                echo "<td style='margin-top: 75px;'> 
                                 <p class='text'>
                                   $tmp
                                 </p>
-                              </div>";
+                              </td>";
 
                 $tmp = $books['author'];
-                echo "<div class='col s4' style='margin-top: 75px'> 
+                echo "<td style='margin-top: 75px'> 
                                 <p>
                                   $tmp
                                 </p>
-                              </div>";
+                              </td>";
 
                 $tmp = $books['book_id'];
                               
                 echo "<input type='hidden' name='xd' value='$tmp' style=''>";
 
                 echo '</form>';
-                echo "</div>";
+                // echo "</div>";
+                echo "</tr>";
               }
             }
           }
