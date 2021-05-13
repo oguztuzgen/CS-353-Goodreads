@@ -1,5 +1,5 @@
 <?php
-	error_reporting(0);
+	// error_reporting(0);
 	require('style.php');
 	require('config.php');
 	$uid = $_SESSION['user_id'];
@@ -11,11 +11,17 @@
 	<?php
 		if (isset($_SESSION['name'])) { // ! ALSO HERE LOG IN INFO IS CHECKED
 			$this_file = htmlspecialchars('<?php echo $_SERVER["PHP_SELF"];?>');
-			echo "<li><a href=\"profile.php?uid=$uid\" class=\"nav-btn\">Profile</a></li>";
+			if($_SESSION['isAdmin'] == 0){
+				echo "<li><a href=\"profile.php?uid=$uid\" class=\"nav-btn\">Profile</a></li>";
+			}
 			echo "<li><a href=\"#\" class=\"nav-btn\">Friends</a></li>";
+			echo "<li><a href=\"create_book_list.php?uid=$uid\" class=\"nav-btn\">Create a new book list</a></li>";
 			echo "<li><a href=\"reading_challenges.php\" class=\"nav-btn\">Reading Challenges</a></li>";
 			echo "<li><a href=\"#\" class=\"nav-btn\">Upload a book</a></li>";
 			echo "<li><a href=\"logout.php\" id=\"logout\" class=\"nav-btn\">Log out</a></li>";
+			if($_SESSION['isAdmin'] == 1){
+				echo "<li><a href=\"reports.php\" id=\"reports\" class=\"nav-btn\">Reports</a></li>";
+			}
 		} else {
 			echo "<li><a href=\"login.php\">Login</a></li>";
 			echo "<li><a href=\"login.php\">Register</a></li>";
@@ -45,7 +51,7 @@
 
 				if (isset($_SESSION['name'])) { // ! ALSO HERE LOG IN INFO IS CHECKED
 					$this_file = htmlspecialchars('<?php echo $_SERVER["PHP_SELF"];?>');
-					echo "<li><a href=\"index.php\" class=\"nav-btn\">My Books</a></li>";
+					echo "<li><a href=\"my_books.php\" class=\"nav-btn\">My Books</a></li>";
 					echo "<li><a href=\"book_upload.php\" class=\"nav-btn\">Upload a book</a></li>";
 				}
 			?>

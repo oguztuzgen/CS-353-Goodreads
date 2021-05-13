@@ -3,6 +3,7 @@
 
 	$login = 0;
 	$login_email_error = $login_password_error = "";
+	$_SESSION['isAdmin'] = 0;
   	
 	// TODO ERRORLARI YERLERINDE GOSTER
 	if (isset($_POST['login'])) {
@@ -30,6 +31,7 @@
 						$_SESSION['email'] = $email;
 						$_SESSION['pass'] = $password;
 						$_SESSION['name'] = $user_data['first_name'];
+						$_SESSION['last_name'] = $user_data['last_name'];
 						$_SESSION['user_id'] = $user_data['user_id'];
 						header("Location: index.php");
 						die;
@@ -97,6 +99,7 @@
 					$_SESSION['login'] = 1;
 					$_SESSION['email'] = $register_email;
 					$_SESSION['password'] = $register_password;
+					$_SESSION['last_name'] = $register_surname;
 					$_SESSION['name'] = $register_name;
 
 					$sql = "select user_id from user where email=\"$register_email\"";

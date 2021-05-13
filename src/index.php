@@ -104,10 +104,10 @@ if (isset($_GET['ordek_x'])) {
             </div>
           </td>
 
-          <td style="width: 1.5%;"></td>
+          <td style="width: 1%;"></td>
 
-          <td style="width: 40%; background-color: #80A1C0; ">
-            <div style="overflow-y: scroll; height: 700px;">
+          <td style="width: 40%; background-color: #80A1C0; margin-right:200px;">
+            <div style="overflow-y: scroll; height: 700px; ">
 
 
 
@@ -195,21 +195,12 @@ if (isset($_GET['ordek_x'])) {
                     echo "</tr>";
                   }
                 }
+                echo '</table>';
               }
               ?>
-
-
-            </div>
-            <a href="book_page"></a>
-          </td>
-
-          <td style="width: 1.5%;"></td>
-
-          <td>
-            <div class="text">
-              <p id="text" style="display:none">annen</p>
             </div>
           </td>
+          <td style="width:1%;"></td>
         </tr>
 
       </table>

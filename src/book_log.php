@@ -105,11 +105,14 @@ $result = mysqli_query($conn, $sql);
 
     $progress = $readed['sum(count)'] / $book['page_count'];
     $progress = $progress * 100;
+    $progress = (int) $progress;
 
     if ($progress >= 100) {
         echo 'Book is Finished';
     } else {
-        echo '%' . $progress;
+        echo '%' . $progress; 
+        echo '<br>'; 
+        echo '<progress id=\"baban\" value="' . $progress . '" max="100"></progress>';
     }
 
 
