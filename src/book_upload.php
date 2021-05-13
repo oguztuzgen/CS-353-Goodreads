@@ -1,16 +1,20 @@
 <?php
 // TODO ADD GENRE FROM BOOK UPLOAD
 
-
 // initialize session var and connect to db
 require('template/header.php');
 
-$allowed_extensions = array('jpg', 'jpeg', 'png');
-$image_error = ""; 
+if ($_SESSION['login'] == 0) {
+	echo "<br><br><br><br><br><h1>404 NOT FOUND</h1>";
+	die;
+}
 
+$allowed_extensions = array('jpg', 'jpeg', 'png');
+
+$submit_param = array('book_title', 'book_author', 'book_description', 'page_count', 'published_month_year', 'book_isbn');
+$image_error = ""; 
 $errors = array('book_title' => '', 'book_author' => '', 'book_description' => '', 'page_count' => '', 'published_month_year' => '', 'book_isbn' => '');
 $book_title = $book_author = $book_description = $page_count = $published_month_year = $book_isbn = $book_language = $upload_path = "";
-$submit_param = array_keys($errors);
 
 if (isset($_POST['submit'])) {
 	foreach ($submit_param as $param => $value) {
@@ -47,10 +51,12 @@ if (isset($_POST['submit'])) {
 				}
 			}
 		} else {
+			$image_error = "Please upload a cover page";
 			$upload_path = '../image/cover_placeholder.png';
 		}
 	} else {
 		$upload_path = '../image/cover_placeholder.png';
+		$image_error = "Please upload a cover page";
 	}
 
 	// TODO EDITION EKLE BURAYA
@@ -61,10 +67,9 @@ if (isset($_POST['submit'])) {
 	$page_count = mysqli_real_escape_string($conn, $_POST["page_count"]);
 	$published_month_year = mysqli_real_escape_string($conn, $_POST["published_month_year"]) . "-01";
 	$book_isbn = mysqli_real_escape_string($conn, $_POST["book_isbn"]);
-	// $book_genres = mysqli_real_escape_string($conn, $_POST["book_genres"]);
 	$book_language = mysqli_real_escape_string($conn, $_POST["language_picker"]);
 
-	if (!array_filter($errors) && empty($error_message)) {
+	if (!array_filter($errors) && empty($image_error)) {
 		// TODO EKLEYEN USERA GORE VERIFIED AYARLA
 		// TODO ORIGINAL TITLE
 		$sql = "insert into book(book_isbn, title, author, description, date_published, book_edition, page_count, rating, verified, view_count, language, original_title, book_cover)
@@ -95,6 +100,8 @@ if (isset($_POST['submit'])) {
 		}
 	}
 }
+
+
 ?>
 
 
@@ -107,6 +114,7 @@ if (isset($_POST['submit'])) {
 			<div class="col s3">
 				<img src="../image/cover_placeholder.png" style="margin: 5px; margin-top:20px;" width="127" height="145">
 					<input type="file" name="image" id="image">
+					<?php echo "<p class=\"red-text\">$image_error</p>"; ?>
 
 			</div>
 
@@ -115,20 +123,26 @@ if (isset($_POST['submit'])) {
 
 				<div class="col s12">
 					<input type="text" name="book_title" style="float: left; margin-top: 15px; padding: 10px; width: 100%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text brand-anan" placeholder="Book Title">
+					<?php $error = $errors['book_title']; echo "<p class=\"red-text\">$error</p>";?>
 					<input type="text" name="book_author" style="float: left; margin-top: 15px; padding: 10px; width: 100%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="Author">
+					<?php $error = $errors['book_author']; echo "<p class=\"red-text\">$error</p>";?>
 					<textarea name="book_description" style="float: left; margin-top: 15px; padding: 10px; width: 100%; height: 100%; background-color:#7fa1bf; border-color: white;" class="text"></textarea>
+					<?php $error = $errors['book_description']; echo "<p class=\"red-text\">$error</p>";?>
 <!-- <input type="text" name="book_description" style="float: left; margin-top: 15px; padding: 10px; width: 100%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="Description"> -->
 					
 					<div class="col s12">
 						<div class="col s6">
 							<input type="text" name="page_count" style="font-size: 14px; float: left; margin-top: 15px; padding: 10px; width: 50%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="Page count">
+							<?php $error = $errors['page_count']; echo "<p class=\"red-text\">$error</p>";?>
 						</div>
 						<div class="col s6">
 							<input type="month" name="published_month_year" style="float: right; margin-top: 15px; padding: 10px; width: 55%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="Enter Date">
+							<?php $error = $errors['published_month_year']; echo "<p class=\"red-text\">$error</p>";?>
 						</div>
 					</div>
 
 					<input type="text" name="book_isbn" style="font-size: 14px; float: left; margin-top: 15px; padding: 10px; width: 40%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="ISBN">
+					<?php $error = $errors['book_isbn']; echo "<p class=\"red-text\">$error</p>";?>
 					<div class="input-field col s12">
 						<select multiple name="book_genres[]">
 							<option value="" disabled selected>Choose your option</option>

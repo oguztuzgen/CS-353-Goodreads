@@ -21,9 +21,9 @@
         }
 
         .rating span input {
-            position: absolute;
+            /* position: absolute;
             top: 0px;
-            left: 0px;
+            left: 0px; */
             opacity: 0; 
         }
 

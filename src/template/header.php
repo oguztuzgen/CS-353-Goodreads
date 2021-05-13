@@ -1,7 +1,9 @@
 <?php
+	error_reporting(0);
 	require('style.php');
 	require('config.php');
 	$uid = $_SESSION['user_id'];
+	
 
 ?>
 
@@ -11,7 +13,7 @@
 			$this_file = htmlspecialchars('<?php echo $_SERVER["PHP_SELF"];?>');
 			echo "<li><a href=\"profile.php?uid=$uid\" class=\"nav-btn\">Profile</a></li>";
 			echo "<li><a href=\"#\" class=\"nav-btn\">Friends</a></li>";
-			echo "<li><a href=\"#\" class=\"nav-btn\">Reading Challenges</a></li>";
+			echo "<li><a href=\"reading_challenges.php\" class=\"nav-btn\">Reading Challenges</a></li>";
 			echo "<li><a href=\"#\" class=\"nav-btn\">Upload a book</a></li>";
 			echo "<li><a href=\"logout.php\" id=\"logout\" class=\"nav-btn\">Log out</a></li>";
 		} else {

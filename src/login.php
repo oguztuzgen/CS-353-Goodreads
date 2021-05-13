@@ -2,14 +2,18 @@
 	require('template/config.php');
 
 	$login = 0;
-
+	$login_email_error = $login_password_error = "";
+  	
 	// TODO ERRORLARI YERLERINDE GOSTER
 	if (isset($_POST['login'])) {
 		$email = $_POST['email'];
 		$password = $_POST['password'];
 
-		if (empty($email) || empty($password)) {
-			echo '<p class="error">user name or password is not entered</p>';
+		if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			$login_email_error = "Please enter a valid email";
+		}
+		if(empty($password)) {
+			$login_password_error = "Password segment cannot be empty";
 		} else if (!empty($email) && !empty($password)) {
 
 			//read from database
@@ -29,15 +33,17 @@
 						$_SESSION['user_id'] = $user_data['user_id'];
 						header("Location: index.php");
 						die;
+					}else {
+						$login_password_error="This password does not match with the e-mail, failed hack attempt...";
 					}
+				} else {
+					$login_email_error = "This email does not exist, maybe you should register UwU";
 				}
 			}
 
 			$_SESSION['login'] = 0;
-			echo '<p class="error">wrong  or password!</p>';
 		} else {
 			$_SESSION['login'] = 0;
-			echo '<p class="error">wrong username or password!</p>';
 		}
 	}
 
@@ -55,7 +61,7 @@
 
 		$check_register_param = array(
 			'0' => 'register_email', '1' => 'register_password',
-			'2' => 'register_name', '3' => 'register_surname','4' => 'register_bdate'
+			'2' => 'register_name', '3' => 'register_surname', '4' => 'register_bdate'
 		);
 
 		// retrieve from post request
@@ -68,7 +74,7 @@
 		if (!filter_var($_POST['register_email'], FILTER_VALIDATE_EMAIL)) {
 			$errors['register_email'] = "Email invalid <br>";
 		}
-		
+
 		// print_r($errors);
 
 		$register_email = mysqli_real_escape_string($conn, $_POST["register_email"]);
@@ -77,20 +83,33 @@
 		$register_surname = mysqli_real_escape_string($conn, $_POST["register_surname"]);
 		$register_bdate = mysqli_real_escape_string($conn, $_POST["register_bdate"]);
 
-		if (!array_filter($errors)) {
-			$sql = "insert into user(email, pass, first_name, last_name, birth_date) VALUES('$register_email', '$register_password','$register_name', '$register_surname', '$register_bdate');";
-			echo $sql;
-			if (mysqli_query($conn, $sql)) {
-				
-				mysqli_close($conn);
-				$_SESSION['login'] = 1;
-				$_SESSION['email'] = $register_email;
-				$_SESSION['password'] = $register_password;
-				$_SESSION['name'] = $register_name;
-				header('Location: index.php');
-			} else {
-				echo "DUMB DUMB SUM TING WONG " . mysqli_error($conn);
+		// check if email already exists TODO TEST
+		$sql = "select user_id from user where email=\"$register_email\"";
+
+		if (!mysqli_query($conn, $sql)) {
+
+			if (!array_filter($errors)) {
+				$sql = "insert into user(email, pass, first_name, last_name, birth_date) VALUES('$register_email', '$register_password','$register_name', '$register_surname', '$register_bdate');";
+				echo $sql;
+				if (mysqli_query($conn, $sql)) {
+
+					mysqli_close($conn);
+					$_SESSION['login'] = 1;
+					$_SESSION['email'] = $register_email;
+					$_SESSION['password'] = $register_password;
+					$_SESSION['name'] = $register_name;
+
+					$sql = "select user_id from user where email=\"$register_email\"";
+					$result = mysqli_query($conn, $sql);
+					$result = mysqli_fetch_assoc($result);
+					$_SESSION['user_id'] = $result['user_id'];
+					header('Location: index.php');
+				} else {
+					echo "DUMB DUMB SUM TING WONG " . mysqli_error($conn);
+				}
 			}
+		} else {
+			$errors['register_email'] = "This email is already used";
 		}
 	}
 
@@ -115,11 +134,12 @@
 
   <body>
 
-  	<div class="center1">
+  	<div class="center1" style="padding: 25px;">
   		<div class="text" style="float:left">
   			<img src="../image/ordek.png" width="200" height="170" alt="">
   		</div>
   		<h1 style="text-align: left; margin-left: 40%;">DUCKREAD</h1>
+  		<a class="text" style="float:right; color:black;" href="admin_login.php"> Go to Admin Login Page</a>
   	</div>
 
   	<div>
@@ -143,11 +163,19 @@
   						<form class="z-depth-0" action="login.php" method="post">
   							<p style="text-decoration:underline; text-align:left; margin-left:29%;">Email</p>
   							<input type="text" name="email" id="login_email" value="" placeholder="E-mail" style="padding: 15px; width: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text">
+  							<?php
+								echo '<p class="red-text">' . $login_email_error . "</p>";
+								?>
   							<p style="text-decoration:underline; text-align:left; margin-left:29%;">Password</p>
   							<input type="password" name="password" id="login_password" value="" placeholder="Password" style="padding: 15px; width: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text">
+  							<?php
+								echo '<p class="red-text">' . $login_password_error . "</p>";
+								?>
   							<br> <br>
   							<input type="submit" name="login" id="login" value="Login" style="padding: 15px; background-color:#7fa1bf;" class="text">
   						</form>
+
+
   					</div>
 
   					<div id="Register" class="logs text" style="display:none;">
@@ -170,6 +198,7 @@
   							<br>
   							<input type="submit" name="register" id="register" value="Register" style="padding: 15px; background-color:#7fa1bf;" class="text">
   						</form>
+
   					</div>
 
   					<script>
@@ -203,10 +232,10 @@
   	<script>
   		$(document).ready(function() {
   			$('.datepicker').datepicker({
-				defaultDate: new Date(2000,1,31),
-    			maxDate: new Date(2015,12,31),
-    			yearRange: [1928, 2015],
-    			format: "yyyy-mm-dd"
+  				defaultDate: new Date(2000, 1, 31),
+  				maxDate: new Date(2015, 12, 31),
+  				yearRange: [1928, 2015],
+  				format: "yyyy-mm-dd"
 
   			});
   		});

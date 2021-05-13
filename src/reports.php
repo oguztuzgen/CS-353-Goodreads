@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html>
-<?php require('template/header.php'); ?>
+<?php 
+require('template/header.php'); 
+require('template/config.php');
+
+if($_SESSION['isAdmin'] == 0){
+	header("Location: index.php");
+}
+
+
+?>
 
 <div>
 	<div style="padding: 150px 7%;" class="col s11">
+
 		<div class="brand-dark row">
 			<div class="brand col s5" style="margin: 50px">
 				<div>
@@ -28,7 +38,7 @@
 
 					$query = "
 							select b.title, b.book_cover, u.first_name, er.report_message, er.report_date
-							from book b, reports r, user u, error_report er
+            							from book b, reports r, user u, error_report er
 							where b.book_id = r.book_id and r.user_id = u.user_id and er.report_id = r.report_id
 							order by b.book_id DESC";
 
