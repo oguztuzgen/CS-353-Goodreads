@@ -24,6 +24,20 @@ $res = mysqli_query($conn, $sql);
 
 ?>
 
+<?php
+if (isset($_POST['join'])) {
+    $sql = "insert into rc_participates (rc_id, user_id)
+                            values (" . $rc_id . "," . $_SESSION['user_id'] . ");";
+
+    if (mysqli_query($conn, $sql)) {
+        echo '<p style="color:green">Joined Succesfully</p>';
+    } else {
+        echo '<p style="color:red">DUM DUM</p>';
+    }
+    header("Location: challenge.php?challenge_id=" . $rc_id);
+}
+?>
+
 <br><br><br><br><br>
 <div class="center1 left text" style="width:50%; margin-left:2%; margin-top:2;">
     <table>
@@ -38,23 +52,13 @@ $res = mysqli_query($conn, $sql);
         </tr>
         <tr style="padding:15px;">
             <?php echo '<form action="challenge.php?challenge_id=' . $rc_id . '"method="POST">' ?>
-            <input type="submit" class="btn" name="join" value="Join the Challenge" onclick="func()">
+            <input type="submit" class="btn blue lighten-2" name="join" value="Join the Challenge" onclick="func()">
             </form>
             <hr style="width: 100%">
-            <?php
-            if (isset($_POST['join'])) {
-                $sql = "insert into rc_participates (rc_id, user_id)
-                            values (" . $rc_id . "," . $_SESSION['user_id'] . ");";
 
-                if (mysqli_query($conn, $sql)) {
-                    echo '<p style="color:green">Joined Succesfully</p>';
-                } else {
-                    echo '<p style="color:red">DUM DUM</p>';
-                }
-                header("challenge.php?challenge_id=" . $rc_id); // bi sorun var refresh istiyor
-                header("challenge.php?challenge_id=" . $rc_id);
-            }
-            ?>
+
+
+
         </tr>
 
         <tr>
@@ -117,7 +121,7 @@ $res = mysqli_query($conn, $sql);
     </table>
 </div>
 
-<div class="row right white text" style="width:40%; margin-right: 50px;">
+<div class="row right text" style="width:40%; margin-right: 50px; padding: 10px; text-align:center; background-color: #a9d4fe">
 
     <h3> Books in the Challenge </h3>
 
@@ -128,10 +132,9 @@ $res = mysqli_query($conn, $sql);
     $res = mysqli_query($conn, $sql);
 
     while ($books = mysqli_fetch_array($res)) {
-        echo '<div class="center">';
+        echo '<div class="center" style="padding: 10px; margin-top: 20px;">';
         echo '<img src="' . $books['book_cover'] . '" onerror=this.src="../image/cover_book.jpg" style="width: 100px; height:135px;">';
         echo '<h5>' . $books['title'] . '</h5>';
-
         echo '</div>';
     }
     ?>

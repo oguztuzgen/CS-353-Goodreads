@@ -164,8 +164,6 @@ $result = mysqli_query($conn, $sql);
 					echo '<tr class="text">';
 					echo '<form action="book_page.php?book_id=' . $_GET['book_id'] . '" method="POST">';
 
-
-
 					echo '<td class="center" style="width: 150px;">';
 					echo '<img src="' . $review['profile_picture'] . '" alt="Yoq" style="width: 100px; height:135px;">';
 					echo '<br>';
@@ -215,8 +213,6 @@ $result = mysqli_query($conn, $sql);
 						$uid = $comms['user_id'];
 
 						echo '<tr class="text" style="border: 3px solid grey;">';
-						//echo '<form action="book_page.php?book_id=' . $_GET['book_id'] . '" method="POST">';
-
 						echo '<td class="center" style="width: 100px;">';
 						echo 'comment';
 						echo '</td>';
@@ -239,8 +235,6 @@ $result = mysqli_query($conn, $sql);
 						echo '</td>';
 
 						echo '<td class=" center" style="width: 250px;">';
-						echo '<input type="submit" name="comment2" class="btn blue lighten-1" value="Comment" style="margin:auto">';
-						echo '<input type="hidden" name="review_id2" value="' . $comms['replied_to'] . '">';
 
 						echo '</td>';
 
@@ -248,8 +242,6 @@ $result = mysqli_query($conn, $sql);
 						echo '</td>';
 
 						echo '</tr>';
-
-
 
 						$sql3 = "select u.profile_picture, u.first_name, u.karma, c.content, u.user_id, c.replied_to_c
 						from user u, comment c
@@ -260,7 +252,6 @@ $result = mysqli_query($conn, $sql);
 							$uid = $comms2['user_id'];
 
 							echo '<tr class="text" style="border: 3px solid grey;">';
-							//echo '<form action="book_page.php?book_id=' . $_GET['book_id'] . '" method="POST">';
 
 							echo '<td class="center" style="width:100px;">';
 							echo '</td>';
@@ -271,8 +262,6 @@ $result = mysqli_query($conn, $sql);
 							echo '<td class="center" style="width: 100px;">';
 							echo '<img src="' . $comms2['profile_picture'] . '" alt="Yoq" style="width: 100px; height:135px;">';
 							echo '</td>';
-
-
 
 							echo '<td class="center" style="width:100px;">';
 

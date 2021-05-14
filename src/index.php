@@ -21,6 +21,14 @@ if (isset($_GET['ordek_x'])) {
   header("Location: book_page.php?book_id=$b_id");
 }
 ?>
+<?php
+//  // if(!isset($_POST['button'])){
+//     $_POST['button'] = 'asdasd';
+    // $_POST['search_bar'] = " ";
+//    // header("Location: index.php");
+//   //}
+
+?>
 
 
 
@@ -82,7 +90,7 @@ if (isset($_GET['ordek_x'])) {
 
 							<br><br>Publish date:<br>
 							Range from<br><br>
-							<input type="month" name="date_from" value="2017-07" style="margin-top: 15px; padding: 10px; width: 55%; height: 40%; background-color:#7fa1bf; border-color: white;"  placeholder="Enter Date">
+							<input type="month" name="date_from" value="1970-01" style="margin-top: 15px; padding: 10px; width: 55%; height: 40%; background-color:#7fa1bf; border-color: white;"  placeholder="Enter Date">
 
 							<br><br>to<br>
 							<input type="month" name="date_to" value="2021-05" style="margin-top: 15px; padding: 10px; width: 55%; height: 40%; background-color:#7fa1bf; border-color: white;"  placeholder="Enter Date">
@@ -114,15 +122,15 @@ if (isset($_GET['ordek_x'])) {
 
               <?php
               // if ($_SERVER["REQUEST_METHOD"] == "POST" ||  $flag == 0) {
-							if (isset($_POST['button'])) {
-                //echo $_POST['search_bar'];
-                $flag = 1;
+							if (isset($_POST['button']) ) {
                 global $search;
-                // error_reporting(0); // delete this in case of a problem
-
+                $search = " ";
+                
+                $flag = 1;
+                
                 $search = $_POST['search_bar'];
+                // error_reporting(0); // delete this in case of a problem
                 //$genrebar = $_POST['genr'];
-
                 echo "
                   <table class='highlight'>
                   <tr>
