@@ -196,7 +196,7 @@
   							<p style="text-decoration:underline; text-align:left; margin-left:29%;">Birth Day</p>
 
   							<div class="input-field" style="width:40.5%; margin-left:29%; ">
-  								<input type="text" class="datepicker text" name="register_bdate" id="register_bdate" style="background-color:#7fa1bf; border-color: white; padding:12px;">
+  								<input type="date" class="datepicker text" name="register_bdate" id="register_bdate" style="background-color:#7fa1bf; border-color: white; padding:12px;">
   							</div>
   							<br>
   							<input type="submit" name="register" id="register" value="Register" style="padding: 15px; background-color:#7fa1bf;" class="text">

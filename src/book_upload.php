@@ -90,7 +90,29 @@ if (isset($_POST['submit'])) {
 			$sql = $sql . ";";
 
 			mysqli_query($conn, $sql);
+			// post value is series_id
+			if (isset($_POST['series']) && !empty($_POST['series'])) {
+				$ser_id = $_POST['series'];
+				$rank = $_POST['rank'] ?? -1;
+				if ($rank <= 0) { $rank = -1; }
 
+				// get original id
+				$sql = "SELECT origin_id, book_id, series_id, max(rank) as max_rank FROM belongs_to WHERE series_id = $ser_id";
+
+				$serie = mysqli_fetch_assoc(mysqli_query($conn, $sql));
+				$origin_id = $serie['origin_id'];
+				$max_rank = $serie['rank'];
+
+				$rank = ($rank == -1) ? $max_rank : $rank;
+
+				$sql = 
+				"SELECT FROM 
+				THEN
+				INSERT INTO belongs_to(origin_id, book_id, series_id, rank)
+				VALUES($origin_id, $book_id, $ser_id, $rank);"; // ! TRIGGER TO CHANGE OTHER ITEMS WHEN A SMALLER RANK IS INTRODUCED
+
+				mysqli_query($conn, $sql);
+			}
 
 			mysqli_close($conn);
 			header('Location: index.php');
@@ -134,15 +156,34 @@ if (isset($_POST['submit'])) {
 						<div class="col s6">
 							<input type="text" name="page_count" style="font-size: 14px; float: left; margin-top: 15px; padding: 10px; width: 50%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="Page count">
 							<?php $error = $errors['page_count']; echo "<p class=\"red-text\">$error</p>";?>
+							<input type="text" name="book_isbn" style="font-size: 14px; float: left; margin-top: 15px; padding: 10px; width: 40%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="ISBN">
+							<?php $error = $errors['book_isbn']; echo "<p class=\"red-text\">$error</p>";?>
 						</div>
 						<div class="col s6">
-							<input type="month" name="published_month_year" style="float: right; margin-top: 15px; padding: 10px; width: 55%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="Enter Date">
+
+							<input type="month" name="published_month_year" style="margin-top: 15px; padding: 10px; width: 55%; height: 40%; background-color:#7fa1bf; border-color: white;"  placeholder="Enter Date">
+							<!-- <input type="month" name="published_month_year" style="float: right; margin-top: 15px; padding: 10px; width: 55%; height: 40%; background-color:#7fa1bf; border-color: white;" placeholder="Enter Date"> -->
 							<?php $error = $errors['published_month_year']; echo "<p class=\"red-text\">$error</p>";?>
+								<select name="series" data-placeholder="None">
+								<option value="">Which series do this book belong to</option>
+								<?php
+									$sql = "SELECT * FROM series";
+
+									$series = mysqli_fetch_all(mysqli_query($conn, $sql), MYSQLI_ASSOC);
+
+									foreach ($series as $ser) {
+										$ser_id = $ser['series_id'];
+										$ser_name = $ser['series_name'];
+										echo "<option value=\"$ser_id\">$ser_name</option>";
+									}
+								?>							
+							</select>
+							<input type="text" name="rank" style="font-size: 14px; float: left; margin-top: 15px; padding: 10px; width: 40%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="Rank in series (default last)">
+
 						</div>
 					</div>
 
-					<input type="text" name="book_isbn" style="font-size: 14px; float: left; margin-top: 15px; padding: 10px; width: 40%; height: 40%; background-color:#7fa1bf; border-color: white;" class="z-depth-0 text" placeholder="ISBN">
-					<?php $error = $errors['book_isbn']; echo "<p class=\"red-text\">$error</p>";?>
+					
 					<div class="input-field col s12">
 						<select multiple name="book_genres[]">
 							<option value="" disabled selected>Choose your option</option>
@@ -166,7 +207,7 @@ if (isset($_POST['submit'])) {
 				</div>
 
 				<div class="row s6">
-					<div class="input-field col s12">
+					<div class="input-field col s12" style="margin-left: 25px; width: 90%">
 						<?php require('template/language_picker.php'); ?>
 					</div>
 

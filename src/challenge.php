@@ -128,11 +128,11 @@ $res = mysqli_query($conn, $sql);
     $res = mysqli_query($conn, $sql);
 
     while ($books = mysqli_fetch_array($res)) {
-        echo '<div class="col center">';
+        echo '<div class="center">';
         echo '<img src="' . $books['book_cover'] . '" onerror=this.src="../image/cover_book.jpg" style="width: 100px; height:135px;">';
         echo '<h5>' . $books['title'] . '</h5>';
 
-        //echo '</div>';
+        echo '</div>';
     }
     ?>
 

@@ -65,7 +65,7 @@
 ?>
 
 <div>
-	<?php echo "<form action=\"\" method=\"POST\">"; ?>
+	<?php echo "<form action=\"index.php\" method=\"POST\">"; ?>
 	<div style="padding: 150px 7%;" class="col s11">
 		<div class="brand-dark row">
 			<div class="brand col s5" style="margin: 50px">
@@ -141,8 +141,6 @@
 						<tbody>
 							<!-- PHP CODE HERE FOREACH QUERY RESULT -->
 							<?php
-
-							
 
 							$sql = 
 							"SELECT * 

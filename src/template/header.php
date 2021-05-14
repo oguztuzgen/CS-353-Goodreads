@@ -2,7 +2,10 @@
 	// error_reporting(0);
 	require('style.php');
 	require('config.php');
-	$uid = $_SESSION['user_id'];
+	
+	// if not admin
+	if (isset($_SESSION['user_id']))
+		$uid = $_SESSION['user_id'];
 	
 
 ?>

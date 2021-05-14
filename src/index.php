@@ -20,8 +20,9 @@ if (isset($_GET['ordek_x'])) {
   $b_id = $_GET['book_id'];
   header("Location: book_page.php?book_id=$b_id");
 }
-
 ?>
+
+
 
 <br><br><br><br><br>
 
@@ -72,20 +73,20 @@ if (isset($_GET['ordek_x'])) {
               foreach ($genres as $index => $pair) {
                 $genre_id = $pair["genre_id"];
                 $genre_name = $pair["genre_name"];
-
                 echo "<option value=\"$genre_id\">$genre_name</option>";
-
-                // <p class=''>
-                //   <label >
-                //     <option value='$genre_id'>$genre_name</option> name='genr' value='$genre_id' onclick='checked($genre_id)'/>
-                //     <span style='color:black; font-size:16px;' >$genre_name</span>
-                //   </label>
-                // </p>";
               }
 
               echo "</select>";
 
               ?>
+
+							<br><br>Publish date:<br>
+							Range from<br><br>
+							<input type="month" name="date_from" value="2017-07" style="margin-top: 15px; padding: 10px; width: 55%; height: 40%; background-color:#7fa1bf; border-color: white;"  placeholder="Enter Date">
+
+							<br><br>to<br>
+							<input type="month" name="date_to" value="2021-05" style="margin-top: 15px; padding: 10px; width: 55%; height: 40%; background-color:#7fa1bf; border-color: white;"  placeholder="Enter Date">
+
 
               <!-- </form> -->
 
@@ -112,11 +113,12 @@ if (isset($_GET['ordek_x'])) {
 
 
               <?php
-              if ($_SERVER["REQUEST_METHOD"] == "POST" ||  $flag == 0) {
+              // if ($_SERVER["REQUEST_METHOD"] == "POST" ||  $flag == 0) {
+							if (isset($_POST['button'])) {
                 //echo $_POST['search_bar'];
                 $flag = 1;
                 global $search;
-                error_reporting(0); // delete this in case of a problem
+                // error_reporting(0); // delete this in case of a problem
 
                 $search = $_POST['search_bar'];
                 //$genrebar = $_POST['genr'];
@@ -130,36 +132,38 @@ if (isset($_GET['ordek_x'])) {
                   </tr>
                 ";
 
+								// * MYSQL CAN EVALUATE WITHOUT DAY INFORMATION
+								$from = $_POST['date_from'] ?? '1970-01-01';
+								$to = $_POST['date_to'] ?? date("Y-m-d");
 
+                $query = 
+								" SELECT * 
+									FROM book b
+									WHERE (title LIKE '$search%' 
+									or title LIKE '%$search' 
+									or author LIKE '$search%' 
+									or title LIKE '%$search')
+									and (date_published BETWEEN '$from-01' AND '$to-31')
+								";
 
-                $query = "
-									select *
-									from book b
-									where true";
-
-                foreach ($_POST['genre_names'] as $gnr) {
-                  $query = $query . " and " . "EXISTS( 
-										select DISTINCT hg.book_id, hg.genre_id
-										from has_genre hg
-										where hg.genre_id = $gnr and hg.book_id = b.book_id)";
-                }
+								if (isset($_POST['genre_names'])) {
+									foreach ($_POST['genre_names'] as $gnr) {
+										$query = $query . 
+											" and EXISTS(
+											select DISTINCT hg.book_id, hg.genre_id
+											from has_genre hg
+											where hg.genre_id = $gnr and hg.book_id = b.book_id)";
+									}
+								}
 								
                 $res = mysqli_query($conn, $query);
 
                 while ($books = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
-
-                  $title = strtolower($books['title']);
-                  $author = strtolower($books['author']);
-                  $search = strtolower($search);
-
-                  if (strpos($title, $search) !== false || strpos($author, $search) !== false) {
-
-                    // echo "<div class='row text'>";
+                  $title = $books['title'];
+                  $author = $books['author'];
+                  $search = $search;
                     echo "<tr>";
                     echo "<td>";
-
-                    // echo "<div class='col s4' style=''>";
-
                     $cover = $books['book_cover'];
 
                     $tmp = $books['title'];
@@ -170,11 +174,7 @@ if (isset($_GET['ordek_x'])) {
 
                                   </div>';
                     echo "</td>";
-                    // echo "</div>";
 
-
-
-                    // echo "<div class='col s4' style='margin-top: 75px;'> 
                     echo "<td style='margin-top: 75px;'> 
                                 <p class='text'>
                                   $tmp
@@ -193,7 +193,6 @@ if (isset($_GET['ordek_x'])) {
                     echo "<input type='hidden' name='xd' value='$tmp' style=''>";
                     echo '</form>';
                     echo "</tr>";
-                  }
                 }
                 echo '</table>';
               }
