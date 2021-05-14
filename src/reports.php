@@ -15,7 +15,7 @@ if($_SESSION['isAdmin'] == 0){
 	<div style="padding: 150px 7%;" class="col s11">
 
 		<div class="brand-dark row">
-			<div class="brand col s5" style="margin: 50px">
+			<div class="brand col s7" style="margin: 50px">
 				<div>
 					<div class="col s9">
 						<div class="brand-text-alt" style="color: #473335">Error Reports</div>
@@ -37,7 +37,7 @@ if($_SESSION['isAdmin'] == 0){
 
 
 					$query = "
-							select b.title, b.book_cover, u.first_name, er.report_message, er.report_date
+							select b.title, b.book_cover, u.first_name, er.report_message, er.report_date, er.report_type
             							from book b, reports r, user u, error_report er
 							where b.book_id = r.book_id and r.user_id = u.user_id and er.report_id = r.report_id
 							order by b.book_id DESC";
@@ -65,24 +65,26 @@ if($_SESSION['isAdmin'] == 0){
 								echo '</div>';
 							echo "</div>";
 
-							$tmp = $reports['report_message'];
-							echo "<div class='col s3' style='margin-top: 75px; text-align:center; border:3px solid black'> 
+							$tmp = $reports['report_type'];
+							echo "<div class='col s2' style='margin-top: 75px; text-align:center; border:3px solid black'> 
 											<p>
 											  $tmp
 											</p>
 										  </div>";
 
-							$tmp = $reports['first_name'];
-							echo "<div class='col s3' style='margin-top: 75px; text-align:center; border:3px solid black'> 
-											<p class='text'>
+							$tmp = $reports['report_message'];
+							echo "<div class='col s4' style='margin-top: 75px; text-align:center; border:3px solid black'> 
+											<p>
 											  $tmp
 											</p>
 										  </div>";
 
 							$tmp = $reports['report_date'];
+							$tmp2 = $reports['first_name'];
 							echo "<div class='col s3' style='margin-top: 75px; text-align:center; border:3px solid black'> 
 										<p class='text'>
-											$tmp
+											by $tmp2 <br>
+											at $tmp
 										</p>
 									</div>";
 

@@ -2,6 +2,10 @@
 error_reporting(0);
 require('template/config.php');
 
+if (!isset($_SESSION['user_id'])) {
+	header('Location: login.php');
+}
+
 // retrieve everything from db
 $uid = $_SESSION['user_id'];
 

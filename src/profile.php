@@ -74,11 +74,12 @@ if ($res = mysqli_query($conn, $sql)) {
 
 	while ($friend = mysqli_fetch_array($result)) {
 
-		echo '<div class="col" style="padding: 10px; margin:10px;">';
+		echo '<div class="col center" style="padding: 10px; margin:25px;">';
 		echo '<div style="width:125; height:125;">';
-		echo "<img src=" . $friend['profile_picture'] . " width=\"125\" height=\"125\" alt='Bune'>";
+		echo "<img src=" . $friend['profile_picture'] . " width=\"125\" height=\"125\" onerror=this.src='uploads/IMG-609e419a2da3b2.02041658.jpg'>";
 		echo '</div>';
 		echo '<h6>' . $friend['first_name'] . " " . $friend['last_name'] . "</h6>";
+		
 		echo '</div>';
 	}
 	?>

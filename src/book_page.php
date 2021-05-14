@@ -200,10 +200,13 @@ $result = mysqli_query($conn, $sql);
 
 					echo '</td>';
 					echo '</form>';
+
+					echo '<td class="center" style="width:100px;">';
+					echo '</td>';
 					echo '</tr>';
 
 
-					$sql2 = "select u.profile_picture, u.first_name, u.karma, c.content, u.user_id, c.replied_to
+					$sql2 = "select u.profile_picture, u.first_name, u.karma, c.content, u.user_id, c.replied_to, c.message_id
 						from user u, comment c
 						where c.replied_to = " . $review['review_id'] . " AND u.user_id = c.user_id;";
 					$res2 = mysqli_query($conn, $sql2);
@@ -241,50 +244,54 @@ $result = mysqli_query($conn, $sql);
 
 						echo '</td>';
 
+						echo '<td class="center" style="width:100px;">';
+						echo '</td>';
+
 						echo '</tr>';
 
 
 
-						// $sql3 = "select u.profile_picture, u.first_name, u.karma, c.content, u.user_id, c.replied_to
-						//from user u, c_comment c
-						//where c.cc_to = " . $comms['replied_to'] . " AND u.user_id = c.user_id;";
-						// $res3 = mysqli_query($conn, $sql2);
+						$sql3 = "select u.profile_picture, u.first_name, u.karma, c.content, u.user_id, c.replied_to_c
+						from user u, comment c
+						where c.replied_to_c = " . $comms['message_id'] . " AND u.user_id = c.user_id;";
+						$res3 = mysqli_query($conn, $sql3);
 
-						// while ($comms = mysqli_fetch_array($res2, MYSQLI_ASSOC)) {
-						// 	$uid = $comms['user_id'];
+						while ($comms2 = mysqli_fetch_array($res3, MYSQLI_ASSOC)) {
+							$uid = $comms2['user_id'];
 
-						// 	echo '<tr class="text" style="border: 3px solid grey;">';
-						// 	//echo '<form action="book_page.php?book_id=' . $_GET['book_id'] . '" method="POST">';
+							echo '<tr class="text" style="border: 3px solid grey;">';
+							//echo '<form action="book_page.php?book_id=' . $_GET['book_id'] . '" method="POST">';
 
-						// 	echo '<td class="center" style="width: 100px;">';
-						// 	echo 'comment';
-						// 	echo '</td>';
+							echo '<td class="center" style="width:100px;">';
+							echo '</td>';
+							echo '<td class="center" style="width: 100px;">';
+							echo 'comment22';
+							echo '</td>';
 
-						// 	echo '<td class="center" style="width: 100px;">';
-						// 	echo '<img src="' . $comms['profile_picture'] . '" alt="Yoq" style="width: 100px; height:135px;">';
-						// 	echo '</td>';
+							echo '<td class="center" style="width: 100px;">';
+							echo '<img src="' . $comms2['profile_picture'] . '" alt="Yoq" style="width: 100px; height:135px;">';
+							echo '</td>';
 
 
 
-						// 	echo '<td class="center" style="width:100px;">';
+							echo '<td class="center" style="width:100px;">';
 
-						// 	echo "<a href=\"profile.php?uid=$uid\">Sent by: ";
-						// 	echo $comms['first_name'];
-						// 	echo '</a>';
-						// 	echo '</td>';
+							echo "<a href=\"profile.php?uid=$uid\">Sent by: ";
+							echo $comms2['first_name'];
+							echo '</a>';
+							echo '</td>';
 
-						// 	echo '<td class="" style="width:200px;">';
-						// 	echo $comms['content'];
-						// 	echo '</td>';
+							echo '<td class="" style="width:200px;">';
+							echo $comms2['content'];
+							echo '</td>';
 
-						// 	echo '<td class=" center" style="width: 250px;">';
-						// 	echo '<input type="submit" name="comment2" class="btn blue lighten-1" value="Comment" style="margin:auto">';
-						// 	echo '<input type="hidden" name="review_id2" value="' . $comms['replied_to'] . '">';
+							echo '<td class=" center" style="width: 150px;">';
+							echo '<input type="submit" name="No" class="btn blue lighten-1" value="Comment" style="margin:auto">';
 
-						// 	echo '</td>';
+							echo '</td>';
 
-						// 	echo '</tr>';
-						// }
+							echo '</tr>';
+						}
 					}
 
 					echo '<tr class="text">';
@@ -330,6 +337,22 @@ $result = mysqli_query($conn, $sql);
 				} else {
 					//echo '<script>alert("No ' . $comment .  '")</script>';
 				}
+			}
+
+			if (isset($_POST['comment2'])) {
+				$rep_id = $_POST['replied_to'];
+				$u = $_SESSION['user_id'];
+				$boi = "abcdefg 2";
+				$comment = "insert into comment(user_id, replied_to, replied_to_c, content) VALUES ( $u, 149, $rep_id, \"$boi\");";
+				if (mysqli_query($conn, $comment)) {
+					//echo '<script>alert("Yes")</script>';
+				} else {
+					//echo '<script>alert("No ' . $comment .  '")</script>';
+				}
+			}
+
+			if (isset($_POST['No'])) {
+					echo '<script>alert("Sohbet odası mı bura")</script>';
 			}
 			?>
 

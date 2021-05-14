@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="styles.css">
 
     <style>
+
         .rating {
             float: left;
             width: auto;
