@@ -23,15 +23,15 @@ if ($res = mysqli_query($conn, $sql)) {
 
 <!DOCTYPE html>
 <br><br><br><br><br><br><br><br>
-<div class="row text blue lighten-4 center" style="width: 70%;">
-  <form action="">
-    <div class="col">
-      <input type="text" placeholder="Search a user...">
-    </div>
-    <div class="col">
-
-    </div>
-  </form>
+<div class="row text blue lighten-4" style="width: 70%; padding: 10px;">
+    <form action="" method="POST" style="margin:auto;">
+      <div class="col s8" style="padding: 20px; ">
+        <input type="text" placeholder="Search a user...">
+      </div>
+      <div class="col s4" style="padding: 20px; float:left;">
+        <input class="btn indigo lighten-2" type="submit" value="Search">
+      </div>
+    </form>
 </div>
 
 <div class="row text blue lighten-4 center" style="width: 70%;">

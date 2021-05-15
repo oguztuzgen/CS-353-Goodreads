@@ -69,13 +69,17 @@ if (isset($_POST['submit'])) {
 	$book_isbn = mysqli_real_escape_string($conn, $_POST["book_isbn"]);
 	$book_language = mysqli_real_escape_string($conn, $_POST["language_picker"]);
 
+	// echo "<pre>"; print_r($_POST); echo "</pre>";
+	// die;
+
 	if (!array_filter($errors) && empty($image_error)) {
 		// TODO EKLEYEN USERA GORE VERIFIED AYARLA
 		// TODO ORIGINAL TITLE
+	
 		$sql = "insert into book(book_isbn, title, author, description, date_published, book_edition, page_count, rating, verified, view_count, language, original_title, book_cover)
 			VALUES('$book_isbn', '$book_title', '$book_author', '$book_description', '$published_month_year', 1, '$page_count', 0, 0, 0, '$book_language', '$book_title', '$upload_path');";
 
-		echo $upload_path . "<br>" . $sql;
+		// echo $upload_path . "<br>" . $sql;
 		if (mysqli_query($conn, $sql)) {
 
 			$sql = "SELECT book_id FROM book WHERE book_isbn=\"$book_isbn\" and title=\"$book_title\" and author=\"$book_author\"";
@@ -97,21 +101,25 @@ if (isset($_POST['submit'])) {
 				if ($rank <= 0) { $rank = -1; }
 
 				// get original id
-				$sql = "SELECT origin_id, book_id, series_id, max(rank) as max_rank FROM belongs_to WHERE series_id = $ser_id";
+				$sql = "SELECT origin_id, series_id, amount as max_rank FROM series WHERE series_id = $ser_id";
 
 				$serie = mysqli_fetch_assoc(mysqli_query($conn, $sql));
 				$origin_id = $serie['origin_id'];
-				$max_rank = $serie['rank'];
+				$max_rank = $serie['max_rank'] + 1;
 
 				$rank = ($rank == -1) ? $max_rank : $rank;
 
 				$sql = 
-				"SELECT FROM 
-				THEN
-				INSERT INTO belongs_to(origin_id, book_id, series_id, rank)
-				VALUES($origin_id, $book_id, $ser_id, $rank);"; // ! TRIGGER TO CHANGE OTHER ITEMS WHEN A SMALLER RANK IS INTRODUCED
+				"INSERT INTO belongs_to(origin_id, book_id, series_id, rank)
+				 VALUES($origin_id, $book_id, $ser_id, $rank);"; // ! TRIGGER TO CHANGE OTHER ITEMS WHEN A SMALLER RANK IS INTRODUCED
 
-				mysqli_query($conn, $sql);
+				if (mysqli_query($conn, $sql)) {
+
+				} else {
+					echo "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>" . $sql;
+					echo mysqli_error($conn);
+					die;
+				}
 			}
 
 			mysqli_close($conn);
