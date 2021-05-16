@@ -2,10 +2,10 @@
 require("template/header.php");
 require('template/config.php');
 ?>
-<?php
-// echo $_SESSION['xd'];
 
-// if book id not specified via get request
+
+
+<?php
 if (!isset($_GET['book_id'])) {
 	echo "<br><br><br><br><br><h1>404 NOT FOUND</h1>";
 	die;
@@ -28,6 +28,9 @@ $result = mysqli_query($conn, $sql);
 ?>
 
 <br><br><br><br><br> <br>
+
+
+
 <div class="row">
 	<div class="col" style="width: 75%; margin-left: 20px;">
 		<div>
@@ -126,8 +129,6 @@ $result = mysqli_query($conn, $sql);
 				<br>
 				<?php // insertion to database
 				if (isset($_POST['baban'])) {
-					//echo ' ' . $_COOKIE["rating"];
-					//echo ' ' . $_POST['reviewBox'];
 
 					$sql = "insert into review (content, rating) values ('" . $_POST['reviewBox'] . "', " . $_COOKIE["rating"] . ");";
 					if (mysqli_query($conn, $sql)) {
@@ -169,6 +170,7 @@ $result = mysqli_query($conn, $sql);
 					echo '<br>';
 					echo $review['date_sent'];
 					echo '</td>';
+
 					echo '<td class="center" style="width: 150px;">';
 					echo '</td>';
 
@@ -193,11 +195,11 @@ $result = mysqli_query($conn, $sql);
 					echo '<input type="hidden" name="review_id" value="' . $review['review_id'] . '">';
 					echo '<input type="hidden" name="user_id" value="' . $review['user_id'] . '">';
 
-					echo '<input type="submit" name="comment" class="btn blue lighten-1" value="Comment" style="margin:auto">';
+					// echo '<input type="submit" name="comment" class="btn blue lighten-1" value="Comment" style="margin:auto">';
 					echo '<input type="hidden" name="review_id2" value="' . $review['review_id'] . '">';
 
 					echo '</td>';
-					echo '</form>';
+					// echo '</form>';
 
 					echo '<td class="center" style="width:100px;">';
 					echo '</td>';
@@ -209,9 +211,17 @@ $result = mysqli_query($conn, $sql);
 						where c.replied_to = " . $review['review_id'] . " AND u.user_id = c.user_id;";
 					$res2 = mysqli_query($conn, $sql2);
 
+					echo '<tr class="text" style="width %40;">';
+					echo "<td colspan=\"3\"><input type=\"text\" name=\"comment_content\" style=\"float: left; margin-top: 15px; padding: 10px; width: 100%; height: 100%; background-color:#7fa1bf; border-color: white;\" placeholder=\"Your comment\" class=\"\"></td>";
+					echo "<td class=\"center\" style=\"width:20px\"></td>";
+					echo '<td> <input type="submit" name="comment" class="btn blue lighten-1" value="Comment" style="margin-left: 50 px"></td>';
+					echo '</tr>';
+					echo '</form>';
+
+
+
 					while ($comms = mysqli_fetch_array($res2, MYSQLI_ASSOC)) {
 						$uid = $comms['user_id'];
-
 						echo '<tr class="text" style="border: 3px solid grey;">';
 						echo '<td class="center" style="width: 100px;">';
 						echo 'comment';
@@ -220,8 +230,6 @@ $result = mysqli_query($conn, $sql);
 						echo '<td class="center" style="width: 100px;">';
 						echo '<img src="' . $comms['profile_picture'] . '" alt="Yoq" style="width: 100px; height:135px;">';
 						echo '</td>';
-
-
 
 						echo '<td class="center" style="width:100px;">';
 
@@ -235,52 +243,50 @@ $result = mysqli_query($conn, $sql);
 						echo '</td>';
 
 						echo '<td class=" center" style="width: 250px;">';
-
 						echo '</td>';
 
-						echo '<td class="center" style="width:100px;">';
+						echo '<td class="center" style="width:200px;">';
 						echo '</td>';
 
-						echo '</tr>';
+						echo "</tr>";
+						// $sql3 = "select u.profile_picture, u.first_name, u.karma, c.content, u.user_id, c.replied_to_c
+						// from user u, comment c
+						// where c.replied_to_c = " . $comms['message_id'] . " AND u.user_id = c.user_id;";
+						// $res3 = mysqli_query($conn, $sql3);
 
-						$sql3 = "select u.profile_picture, u.first_name, u.karma, c.content, u.user_id, c.replied_to_c
-						from user u, comment c
-						where c.replied_to_c = " . $comms['message_id'] . " AND u.user_id = c.user_id;";
-						$res3 = mysqli_query($conn, $sql3);
+						// while ($comms2 = mysqli_fetch_array($res3, MYSQLI_ASSOC)) {
+						// 	$uid = $comms2['user_id'];
 
-						while ($comms2 = mysqli_fetch_array($res3, MYSQLI_ASSOC)) {
-							$uid = $comms2['user_id'];
+						// 	echo '<tr class="text" style="border: 3px solid grey;">';
 
-							echo '<tr class="text" style="border: 3px solid grey;">';
+						// 	echo '<td class="center" style="width:100px;">';
+						// 	echo '</td>';
+						// 	echo '<td class="center" style="width: 100px;">';
+						// 	echo 'comment22';
+						// 	echo '</td>';
 
-							echo '<td class="center" style="width:100px;">';
-							echo '</td>';
-							echo '<td class="center" style="width: 100px;">';
-							echo 'comment22';
-							echo '</td>';
+						// 	echo '<td class="center" style="width: 100px;">';
+						// 	echo '<img src="' . $comms2['profile_picture'] . '" alt="Yoq" style="width: 100px; height:135px;">';
+						// 	echo '</td>';
 
-							echo '<td class="center" style="width: 100px;">';
-							echo '<img src="' . $comms2['profile_picture'] . '" alt="Yoq" style="width: 100px; height:135px;">';
-							echo '</td>';
+						// 	echo '<td class="center" style="width:100px;">';
 
-							echo '<td class="center" style="width:100px;">';
+						// 	echo "<a href=\"profile.php?uid=$uid\">Sent by: ";
+						// 	echo $comms2['first_name'];
+						// 	echo '</a>';
+						// 	echo '</td>';
 
-							echo "<a href=\"profile.php?uid=$uid\">Sent by: ";
-							echo $comms2['first_name'];
-							echo '</a>';
-							echo '</td>';
+						// 	echo '<td class="" style="width:200px;">';
+						// 	echo $comms2['content'];
+						// 	echo '</td>';
 
-							echo '<td class="" style="width:200px;">';
-							echo $comms2['content'];
-							echo '</td>';
+						// 	echo '<td class=" center" style="width: 150px;">';
+						// 	echo '<input type="button" name="No" class="btn blue lighten-1" value="Comment" style="margin:auto">';
+							
+						// 	echo '</td>';
 
-							echo '<td class=" center" style="width: 150px;">';
-							echo '<input type="submit" name="No" class="btn blue lighten-1" value="Comment" style="margin:auto">';
-
-							echo '</td>';
-
-							echo '</tr>';
-						}
+						// 	echo '</tr>';
+						// }
 					}
 
 					echo '<tr class="text">';
@@ -293,8 +299,6 @@ $result = mysqli_query($conn, $sql);
 
 			<?php
 
-
-			// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LIKE LA ALAKALI HICBIR SEY CALISMIYOR
 			if (isset($_POST['like'])) {
 
 				$rid = $_POST['review_id'];
@@ -311,7 +315,7 @@ $result = mysqli_query($conn, $sql);
 					$sql = "insert into likes(review_id, user_id) VALUES($rid, $u);";
 					mysqli_query($conn, $sql);
 				} else {
-					// TODO ERROR MESSAGE CANNOT LIKE TWICE
+					echo "<script>alert(\"YOU CANNOT LIKE A COMMENT TWICE!\")</script>";
 				}
 			}
 
@@ -319,30 +323,22 @@ $result = mysqli_query($conn, $sql);
 			if (isset($_POST['comment'])) {
 				$rid = $_POST['review_id2'];
 				$u = $_SESSION['user_id'];
-				$boi = "abcdefg";
+				$boi = $_POST['comment_content'];
 				$comment = "insert into comment(user_id, replied_to, content) VALUES ( $u, $rid, \"$boi\");";
 				if (mysqli_query($conn, $comment)) {
 					//echo '<script>alert("Yes")</script>';
-				} else {
-					//echo '<script>alert("No ' . $comment .  '")</script>';
 				}
 			}
 
-			if (isset($_POST['comment2'])) {
-				$rep_id = $_POST['replied_to'];
-				$u = $_SESSION['user_id'];
-				$boi = "abcdefg 2";
-				$comment = "insert into comment(user_id, replied_to, replied_to_c, content) VALUES ( $u, 149, $rep_id, \"$boi\");";
-				if (mysqli_query($conn, $comment)) {
-					//echo '<script>alert("Yes")</script>';
-				} else {
-					//echo '<script>alert("No ' . $comment .  '")</script>';
-				}
-			}
-
-			if (isset($_POST['No'])) {
-					echo '<script>alert("Sohbet odası mı bura")</script>';
-			}
+			// ! COMMENT 2
+			// if (isset($_POST['comment2'])) {
+			// 	$rep_id = $_POST['replied_to'];
+			// 	$u = $_SESSION['user_id'];
+			// 	$boi = "abcdefg 2";
+			// 	$comment = "insert into comment(user_id, replied_to, replied_to_c, content) VALUES ( $u, 149, $rep_id, \"$boi\");";
+			// 	if (mysqli_query($conn, $comment)) {
+			// 	}
+			// }
 			?>
 
 		</div>
@@ -355,8 +351,6 @@ $result = mysqli_query($conn, $sql);
 		<?php
 		$sql = 'select distinct l.list_id, bl.title from lists l, book_list bl where l.book_id =' . $book_id . ' and l.list_id = bl.list_id ';
 		$res = mysqli_query($conn, $sql);
-		// echo $sql;
-		// print_r($res);
 
 		while ($bl = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
@@ -388,6 +382,5 @@ $result = mysqli_query($conn, $sql);
 		}
 		?>
 	</div>
-
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

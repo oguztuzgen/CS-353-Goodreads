@@ -42,7 +42,7 @@ if ($res = mysqli_query($conn, $sql)) {
 		echo "<img src=\"$prof\" width=\"250\" height=\"250\" alt='Bune'>"; ?>
 
 		<h5 style="text-decoration:underline; margin-left: 25px;"> Biography:</h5>
-		<div class="" style="margin-left: 25px; border: 3px solid grey; width: 300%; height: 100px;">
+		<div class="" style="margin-left: 25px; border: 3px solid grey; width: 100%; height: 100px;">
 			<?php echo '<h6>' . $info['about'] . '</h6>'; ?>
 		</div>
 
