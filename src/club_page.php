@@ -67,11 +67,11 @@
                 
                 
             <?php endforeach ?>
-
+            <input type="text" placeholder="Enter Your Comment..." class="text" name="reviewBox">
             <input type="submit" name="comment" class="btn blue lighten-1" value="Submit Review" style="margin:auto">
-            <?php if (isset($_POST['baban'])) {
-
-                    $sql = "insert into review (content, rating) values ('" . $_POST['reviewBox'] . "', " . $_COOKIE["rating"] . ");";
+            <?php if (isset($_POST['comment'])) {
+                    $maxid = max($result["post_id"]);
+                    $sql = "insert bc_post(post_id, content) values ( '$maxid' + 1, $_POST['reviewBox'])";
                     if (mysqli_query($conn, $sql)) {
                         //echo 'za';
                     }
