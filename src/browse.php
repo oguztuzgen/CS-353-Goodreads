@@ -123,9 +123,9 @@ require('template/config.php');
 									<tbody>
 									";
 										foreach ($result as $ser) {
-											echo "<pre>";
-												print_r($ser);
-											echo "</pre>";
+											// echo "<pre>";
+											// 	print_r($ser);
+											// echo "</pre>";
 											$series_id = $ser['name'];
 											$series_name = $ser['member_count'] ?? 0;
 											$series_img = $ser['book_cover'];
