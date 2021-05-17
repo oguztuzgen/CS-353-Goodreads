@@ -224,32 +224,32 @@ if (isset($_POST['remove'])) {
 	<hr>
 </div>
 
-<div class="row white text" style="width: 60%; float:left; margin-left:30px; padding: 20px;">
-	<h5 style="text-decoration:underline; margin-left: 25px;"> Book Clubs:</h5>
-</div>
 
-<div class="row white text" style="width: 35%; float:right; margin-right:30px; padding: 20px;">
-	<h5 style="text-decoration:underline; margin-left: 25px;"> Recommend by Friends</h5>
-	
-	<?php 
-		$sql = "select *
+
+<div class="row white text" style="width: 60%; float:left; margin-left:30px; padding: 20px;">
+	<h5 style="text-decoration:underline; margin-left: 25px;"> Recommended by Friends</h5>
+
+	<?php
+	$sql = "select *
 		from (select distinct book_id from recommends where friend_id = $uid) as c, book b
 		where c.book_id = b.book_id ;";
 
-		$res = mysqli_query($conn, $sql);
+	$res = mysqli_query($conn, $sql);
 
-		while ($bok = mysqli_fetch_array($res)) {
-			?>
-		
-			<img src="<?php echo $bok['book_cover'] ?>" alt="">
-
-
-	<?php			
-		}
+	while ($bok = mysqli_fetch_array($res)) {
+	?>
+		<div class="col center" style="width: 397px; height: 200px; border: 2px solid grey; padding: 10px;">
+			<img src="<?php echo $bok['book_cover']; ?>" alt="" style="width: 120px; height: 135px;" onerror=this.src="../image/cover_placeholder.png">
+			<h6> <?php echo $bok['title']; ?> </h6>
+		</div>
+	<?php
+	}
 	?>
 
 </div>
-
+<div class="row white text" style="width: 35%; float:right; margin-right:30px; padding: 20px;">
+	<h5 style="text-decoration:underline; margin-left: 25px;"> Book Clubs:</h5>
+</div>
 </form>
 
 </body>

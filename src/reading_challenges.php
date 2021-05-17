@@ -9,7 +9,14 @@ require('template/config.php');
 
 
 <div class="center1 text">
+    <?php if ($_SESSION['isAdmin']) { ?>
+        <!-- <a style="float:right; text-decoration:underline; color:blue;" href="create_rc.php"> Create a Reading Challenge </a> -->
+        <form action="begin_rc.php">
+        <button class="btn indigo lighten-2" style="float:right; margin-top:20px;" formaction="begin_rc.php"> Create a Reading Challenge </button>
+        </form>
+    <?php } ?>
     <h4> All Reading Challenges</h4>
+
 
     <table>
         <tr>
@@ -48,8 +55,8 @@ require('template/config.php');
             echo '</td>';
 
             echo '<td >';
-            echo '<a style="text-decoration:underline; color:blue;" href="challenge.php?challenge_id=' 
-							. $reading_challenges['rc_id'] . '">Go to challenge page</a>';
+            echo '<a style="text-decoration:underline; color:blue;" href="challenge.php?challenge_id='
+                . $reading_challenges['rc_id'] . '">Go to challenge page</a>';
 
             echo '</td>';
 

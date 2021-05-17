@@ -1,3 +1,4 @@
+
   <?php
 	require('template/config.php');
 
@@ -33,6 +34,8 @@
 						$_SESSION['name'] = $user_data['first_name'];
 						$_SESSION['last_name'] = $user_data['last_name'];
 						$_SESSION['user_id'] = $user_data['user_id'];
+						$_SESSION['critic'] = $user_data['critic'];
+						$_SESSION['author'] = $user_data['author'];
 						header("Location: index.php");
 						die;
 					}else {
@@ -86,16 +89,18 @@
 		$register_bdate = mysqli_real_escape_string($conn, $_POST["register_bdate"]);
 
 		// check if email already exists TODO TEST
-		$sql = "select user_id from user where email=\"$register_email\"";
+		$sql = "select user_id from user where email= '" .$register_email ."' ";
 
-		if (!mysqli_query($conn, $sql)) {
 
-			if (!array_filter($errors)) {
-				$sql = "insert into user(email, pass, first_name, last_name, birth_date) VALUES('$register_email', '$register_password','$register_name', '$register_surname', '$register_bdate');";
+
+		if ($res = mysqli_query($conn, $sql)) {
+			
+			if (!array_filter($errors) && mysqli_num_rows($res) == 0) {
+				$sql = "insert into user(email, pass, first_name, last_name, birth_date, profile_picture) VALUES('$register_email', '$register_password','$register_name', '$register_surname', '$register_bdate', 'image/profile_placeholder.jpg');";
 				echo $sql;
 				if (mysqli_query($conn, $sql)) {
 
-					mysqli_close($conn);
+					// mysqli_close($conn);
 					$_SESSION['login'] = 1;
 					$_SESSION['email'] = $register_email;
 					$_SESSION['password'] = $register_password;
@@ -109,10 +114,17 @@
 					header('Location: index.php');
 				} else {
 					echo "DUMB DUMB SUM TING WONG " . mysqli_error($conn);
+					die;
 				}
+			} else {
+				print_r($errors);
+				echo "DUMB DUMB SUM TING WONG asfdljdslkjfklsad";
+				die;
 			}
 		} else {
-			$errors['register_email'] = "This email is already used";
+			echo mysqli_error($conn);
+
+			die;
 		}
 	}
 

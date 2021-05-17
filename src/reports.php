@@ -1,21 +1,28 @@
+<?php
+	error_reporting(0); // DELETE IN CASE OF ERROR
+	require('template/config.php');
+
+	if ($_SESSION['isAdmin'] == 0) {
+		header("Location: index.php");
+	}
+
+	if (isset($_POST['edit'])) {
+		$bid = $_POST['book_id'];
+		$redirect = "book_edit.php?book_id=$bid";
+		// die;
+		header("Location: book_edit.php?book_id=$bid");
+	}
+
+?>
+
 
 <!DOCTYPE html>
 <html>
 <?php
 require('template/header.php');
-require('template/config.php');
 // error_reporting(0);
 
-if ($_SESSION['isAdmin'] == 0) {
-	header("Location: index.php");
-}
 
-if (isset($_POST['edit'])) {
-	$bid = $_POST['book_id'];
-	$redirect = "book_edit.php?book_id=$bid";
-	// die;
-	header("Location: book_edit.php?book_id=$bid");
-}
 
 ?>
 <div>

@@ -67,29 +67,25 @@
                 
                 
             <?php endforeach ?>
+
             <input type="text" placeholder="Enter Your Comment..." class="text" name="reviewBox">
             <input type="submit" name="comment" class="btn blue lighten-1" value="Submit Review" style="margin:auto">
             <?php if (isset($_POST['comment'])) {
-                    $maxid = max($result["post_id"]);
-                    $sql = "insert bc_post(post_id, content) values ( '$maxid' + 1, $_POST['reviewBox'])";
-                    if (mysqli_query($conn, $sql)) {
-                        //echo 'za';
-                    }
+                    $maxid = max($result["post_id"]) + 1;
+                    $sql5 = "INSERT INTO bc_post(post_id, content) values (".$maxid." , " . $_POST['reviewBox'] . ")";
+                    if ($conn->query($sql5) === TRUE) {
+                        echo "New record created successfully";
+                      } else {
+                        echo "Error: " . $sql5 . "<br>" . $conn->error;
+                      }
 
-                    $sql = "select max(review_id)
-                    from review;";
-                    $res = mysqli_query($conn, $sql);
-                    $rev_id = mysqli_fetch_array($res, MYSQLI_ASSOC);
-
-                    $sql = "insert into reviews(review_id, user_id, book_id) values (" . $rev_id['max(review_id)'] . ", " . $_SESSION['user_id'] . "," . $book_id . ");";
-                    if (mysqli_query($conn, $sql)) {
-                        //echo 'succesful insertion';
-                    }
                 }
             ?>
 
 
 		</div>
+    
+	</div>
 		<div class="col s4">
 			
 		</div>

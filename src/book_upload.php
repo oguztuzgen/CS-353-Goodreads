@@ -9,6 +9,10 @@ if ($_SESSION['login'] == 0) {
 	die;
 }
 
+if (!isset($_SESSION['critic'])) {
+	header('Location: index.php');
+}
+
 $allowed_extensions = array('jpg', 'jpeg', 'png');
 $submit_param = array('book_title', 'book_author', 'book_description', 'page_count', 'published_month_year', 'book_isbn', 'book_edition', 'book_translator');
 $image_error = ""; 
@@ -124,7 +128,7 @@ if (isset($_POST['submit'])) {
 				}
 			}
 
-			mysqli_close($conn);
+			//mysqli_close($conn);
 			header('Location: index.php');
 
 		} else {

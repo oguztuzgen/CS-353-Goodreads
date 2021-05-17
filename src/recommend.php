@@ -4,11 +4,12 @@ require('template/header.php');
 if (!$conn) {
   echo "Error in connection";
 }
-$uid = $_GET['uid'];
+$uid = $_SESSION['user_id'];
+$book_id = $_GET['book_id'];
 
 $sql = "SELECT distinct u.user_id, u.first_name, u.last_name, u.profile_picture 
 FROM user u, friends f 
-WHERE u.user_id <> " . $uid . " and u.user_id not in (select fa.friend_id
+WHERE u.user_id <> " . $uid . " and u.user_id in (select fa.friend_id
 													from friends fa
 													where fa.user_id = " . $uid . ");";
 
@@ -26,25 +27,29 @@ if ($res = mysqli_query($conn, $sql)) {
   die;
 }
 ?>
-
+<br><br><br><br><br><br><br><br>
 <?php
 // add friend
-if (isset($_POST['add_fren'])) {
+
+if (isset($_POST['recommend'])) {
+
   $frenId =  $_POST['frenId'];
   
-  $sql2 = "insert into friend_requests (send_user, recieve_user) values(".$uid ." , " .$frenId ." );";
+  $sql2 = "insert into recommends (user_id, book_id, friend_id) values(".$uid ." , " . $book_id . ", " .$frenId ." );";
 
   //$sql2 = "insert into friends (user_id, friend_id) values(" . $uid. ", ". $frenId . ");";
-  // echo $sql2;
+//   echo $sql2;
 
-  mysqli_query($conn, $sql2);
-  header("Location: addfriend.php?uid=$uid");
+  if(mysqli_query($conn, $sql2)){
+    header("Location: recommend.php?uid=$book_id");
+  }
+  
 
 }
 ?>
 
 <!DOCTYPE html>
-<br><br><br><br><br><br><br><br>
+
 
 <div class="row text blue lighten-4" style="width: 70%; padding: 10px;">
     <form action="" method="POST" style="margin:auto;">
@@ -68,7 +73,7 @@ if (isset($_POST['add_fren'])) {
 
       <form method="POST" style="padding: 10px;">
         <input type="hidden" value="<?php echo $id; ?>" name="frenId">
-        <input class="btn blue lighten-3" type="submit" name="add_fren" value="Add friend" id="user">
+        <input class="btn blue lighten-3" type="submit" name="recommend" value="recommend" id="user">
       </form>
 
     </div>

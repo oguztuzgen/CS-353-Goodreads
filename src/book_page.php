@@ -152,7 +152,7 @@ if (isset($_POST['recomend'])) {
 							<input type="submit" name="addToWant" class="btn" value="Add to Want to Read List">
 						</form>
 					<?php } ?>
-
+						<div style="padding:10px;"></div>
 					<?php if ($_SESSION['login'] == 1) { ?>
 						<form action="" method="POST">
 							<input type="submit" name="recomend" class="btn" value="Recommend This Book">

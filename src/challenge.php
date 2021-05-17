@@ -23,22 +23,24 @@ $res = mysqli_query($conn, $sql);
 
 
 ?>
-
+<br><br><br><br><br>
 <?php
 if (isset($_POST['join'])) {
     $sql = "insert into rc_participates (rc_id, user_id)
                             values (" . $rc_id . "," . $_SESSION['user_id'] . ");";
+    echo $sql;
 
     if (mysqli_query($conn, $sql)) {
         echo '<p style="color:green">Joined Succesfully</p>';
+        header("Location: challenge.php?challenge_id=" . $rc_id);
     } else {
         echo '<p style="color:red">DUM DUM</p>';
     }
-    header("Location: challenge.php?challenge_id=" . $rc_id);
+    
 }
 ?>
 
-<br><br><br><br><br>
+
 <div class="center1 left text" style="width:50%; margin-left:2%; margin-top:2;">
     <table>
         <tr style="padding:15px;">
@@ -108,8 +110,15 @@ if (isset($_POST['join'])) {
                     echo '<br>';
                     echo '<progress id=\"baban\" value="' . $toplam . '" max="100"></progress>';
                     echo '</td>';
-
                     echo '</tr>';
+
+                    if($toplam >= 100){
+                        $quer = "update rc_participates set completed = 1 where user_id = $uid and rc_id =" .$_GET['challenge_id'] . ";";
+                        $quer2 = "update user set wins = wins + 1 where user_id = $uid";
+                        mysqli_query($conn, $quer);
+                        mysqli_query($conn, $quer2);
+                    }
+
                 }
                 ?>
 

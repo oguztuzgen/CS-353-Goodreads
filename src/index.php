@@ -178,7 +178,7 @@ if (isset($_GET['ordek_x'])) {
                     echo '<form action="index.php" method="GET">
                                   <div class="container">
                                       <input type = "image" name="ordek"
-                                      src="' . $cover . '" style="width: 100px; height: 135px;" alt="Image" formmethod="get">
+                                      src="' . $cover . '" style="width: 100px; height: 135px;" alt="Image" formmethod="get" onerror=this.src="../image/cover_placeholder.png">
 
                                   </div>';
                     echo "</td>";
