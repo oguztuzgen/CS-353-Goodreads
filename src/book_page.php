@@ -3,8 +3,6 @@ require("template/header.php");
 require('template/config.php');
 ?>
 
-
-
 <?php
 if (!isset($_GET['book_id'])) {
 	echo "<br><br><br><br><br><h1>404 NOT FOUND</h1>";
@@ -21,13 +19,78 @@ $book = mysqli_fetch_assoc($result1);
 $cover = $book['book_cover'];
 
 
-// !!!! JOIN QUERY TO GET GENRE NAME
 $sql = "select genre_name from genre g, has_genre hg where g.genre_id = hg.genre_id and hg.book_id = '$book_id';";
 $result = mysqli_query($conn, $sql);
 
+
+if (isset($_POST['like'])) {
+
+	$rid = $_POST['review_id'];
+	$u = $_POST['user_id'];
+	$sql = "select count(*) from likes where review_id = $rid and user_id = $u";
+
+	if (mysqli_fetch_assoc(mysqli_query($conn, $sql))['count(*)'] <= 0) {
+		$boi = "update review set likes = likes + 1 where review_id = $rid;";
+		mysqli_query($conn, $boi);
+
+		$sql = "update user set karma = karma + 1 where user_id =" . $_POST['user_id'] . ";";
+		mysqli_query($conn, $sql);
+
+		$sql = "insert into likes(review_id, user_id) VALUES($rid, $u);";
+		mysqli_query($conn, $sql);
+	} else {
+		echo "<script>alert(\"YOU CANNOT LIKE A COMMENT TWICE!\")</script>";
+	}
+}
+
+
+if (isset($_POST['comment'])) {
+
+	$rid = $_POST['review_id2'];
+	$u = $_SESSION['user_id'];
+	$boi = $_POST['comment_content'];
+	$comment = "insert into comment(user_id, replied_to, content) VALUES ( $u, $rid, \"$boi\");";
+	if (mysqli_query($conn, $comment)) {
+		//echo '<script>alert("Yes")</script>';
+	}
+}
+
+// ! COMMENT 2
+// if (isset($_POST['comment2'])) {
+// 	$rep_id = $_POST['replied_to'];
+// 	$u = $_SESSION['user_id'];
+// 	$boi = "abcdefg 2";
+// 	$comment = "insert into comment(user_id, replied_to, replied_to_c, content) VALUES ( $u, 149, $rep_id, \"$boi\");";
+// 	if (mysqli_query($conn, $comment)) {
+// 	}
+// }
+
+$check = "select COUNT(book_id) from read_list where book_id = " . $book_id . " and user_id = " . $_SESSION['user_id'] . " ;";
+$res11 = mysqli_query($conn, $check);
+$wanted = mysqli_fetch_array($res11);
+
+?>
+<?php
+
+if (isset($_POST['addToWant'])) {
+
+	$sql = "insert into read_list(user_id, book_id, status) values(" . $_SESSION['user_id'] . ", " . $book_id . " , " . "'WANT'" . " );";
+
+	mysqli_query($conn, $sql);
+
+	header("Location: book_page.php?book_id=$book_id");
+}
+?>
+<?php
+if (isset($_POST['recomend'])) {
+
+	header("Location: recommend.php?book_id=$book_id");
+}
 ?>
 
+
 <br><br><br><br><br> <br>
+
 
 
 
@@ -80,6 +143,21 @@ $result = mysqli_query($conn, $sql);
 					<?php echo "<a href=\"book_log.php?book_id=$book_id\">See your logs</a>" ?>
 
 					<!-- buraya tuş gelecek -->
+
+
+				</div>
+				<div class="col" style="padding:10px;">
+					<?php if ($wanted['COUNT(book_id)'] == 0) { ?>
+						<form action="" method="POST">
+							<input type="submit" name="addToWant" class="btn" value="Add to Want to Read List">
+						</form>
+					<?php } ?>
+
+					<?php if ($_SESSION['login'] == 1) { ?>
+						<form action="" method="POST">
+							<input type="submit" name="recomend" class="btn" value="Recommend This Book">
+						</form>
+					<?php } ?>
 				</div>
 
 			</div>
@@ -154,7 +232,7 @@ $result = mysqli_query($conn, $sql);
 			<p>Reviews:</p>
 			<table>
 				<?php
-				$sql = "select u.first_name, r.date_sent, r.content, r.rating, r.likes, u.profile_picture, u.user_id, r.review_id
+				$sql = "select u.first_name, r.date_sent, r.content, r.rating, r.likes, u.profile_picture, u.user_id, r.review_id, u.critic
         from reviews rw, review r, user u
         where rw.review_id = r.review_id and rw.book_id = " . $book_id . " and rw.user_id = u.user_id";
 				$res = mysqli_query($conn, $sql);
@@ -162,7 +240,13 @@ $result = mysqli_query($conn, $sql);
 				while ($review = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
 					$uid = $review['user_id'];
-					echo '<tr class="text">';
+					$critic = $review['critic'];
+
+					if ($critic) {
+						echo '<tr class="text" style="border: solid purple">';
+					} else {
+						echo '<tr class="text">';
+					}
 					echo '<form action="book_page.php?book_id=' . $_GET['book_id'] . '" method="POST">';
 
 					echo '<td class="center" style="width: 150px;">';
@@ -174,10 +258,18 @@ $result = mysqli_query($conn, $sql);
 					echo '<td class="center" style="width: 150px;">';
 					echo '</td>';
 
-					echo '<td class="" style="width:150px;">';
+					echo '<td class="" style="width:300px;">';
 
 					echo "<a href=\"profile.php?uid=$uid\">Sent by: ";
+					if ($critic == 1) {
+						echo '<span style="color:red;"> Critic ';
+					}
+
 					echo $review['first_name'];
+
+					if ($critic == 1) {
+						echo '</span>';
+					}
 					echo '</a>';
 					echo '<pre class="text"> Rating: ';
 					echo $review['rating'];
@@ -206,7 +298,7 @@ $result = mysqli_query($conn, $sql);
 					echo '</tr>';
 
 
-					$sql2 = "select u.profile_picture, u.first_name, u.karma, c.content, u.user_id, c.replied_to, c.message_id
+					$sql2 = "select u.profile_picture, u.first_name, u.karma, c.content, u.user_id, c.replied_to, c.message_id, u.critic
 						from user u, comment c
 						where c.replied_to = " . $review['review_id'] . " AND u.user_id = c.user_id;";
 					$res2 = mysqli_query($conn, $sql2);
@@ -222,7 +314,13 @@ $result = mysqli_query($conn, $sql);
 
 					while ($comms = mysqli_fetch_array($res2, MYSQLI_ASSOC)) {
 						$uid = $comms['user_id'];
-						echo '<tr class="text" style="border: 3px solid grey;">';
+						$critic = $comms['critic'];
+
+						if ($critic) {
+							echo '<tr class="text" style="border: 3px solid purple;">';
+						} else {
+							echo '<tr class="text" style="border: 3px solid grey;">';
+						}
 						echo '<td class="center" style="width: 100px;">';
 						echo 'comment';
 						echo '</td>';
@@ -234,7 +332,13 @@ $result = mysqli_query($conn, $sql);
 						echo '<td class="center" style="width:100px;">';
 
 						echo "<a href=\"profile.php?uid=$uid\">Sent by: ";
+						if ($critic == 1) {
+							echo '<span style="color:red;"> Critic ';
+						}
 						echo $comms['first_name'];
+						if ($critic == 1) {
+							echo '</span>';
+						}
 						echo '</a>';
 						echo '</td>';
 
@@ -282,7 +386,7 @@ $result = mysqli_query($conn, $sql);
 
 						// 	echo '<td class=" center" style="width: 150px;">';
 						// 	echo '<input type="button" name="No" class="btn blue lighten-1" value="Comment" style="margin:auto">';
-							
+
 						// 	echo '</td>';
 
 						// 	echo '</tr>';
@@ -297,49 +401,7 @@ $result = mysqli_query($conn, $sql);
 
 			</table>
 
-			<?php
 
-			if (isset($_POST['like'])) {
-
-				$rid = $_POST['review_id'];
-				$u = $_POST['user_id'];
-				$sql = "select count(*) from likes where review_id = $rid and user_id = $u";
-
-				if (mysqli_fetch_assoc(mysqli_query($conn, $sql))['count(*)'] <= 0) {
-					$boi = "update review set likes = likes + 1 where review_id = $rid;";
-					mysqli_query($conn, $boi);
-
-					$sql = "update user set karma = karma + 1 where user_id =" . $_POST['user_id'] . ";";
-					mysqli_query($conn, $sql);
-
-					$sql = "insert into likes(review_id, user_id) VALUES($rid, $u);";
-					mysqli_query($conn, $sql);
-				} else {
-					echo "<script>alert(\"YOU CANNOT LIKE A COMMENT TWICE!\")</script>";
-				}
-			}
-
-
-			if (isset($_POST['comment'])) {
-				$rid = $_POST['review_id2'];
-				$u = $_SESSION['user_id'];
-				$boi = $_POST['comment_content'];
-				$comment = "insert into comment(user_id, replied_to, content) VALUES ( $u, $rid, \"$boi\");";
-				if (mysqli_query($conn, $comment)) {
-					//echo '<script>alert("Yes")</script>';
-				}
-			}
-
-			// ! COMMENT 2
-			// if (isset($_POST['comment2'])) {
-			// 	$rep_id = $_POST['replied_to'];
-			// 	$u = $_SESSION['user_id'];
-			// 	$boi = "abcdefg 2";
-			// 	$comment = "insert into comment(user_id, replied_to, replied_to_c, content) VALUES ( $u, 149, $rep_id, \"$boi\");";
-			// 	if (mysqli_query($conn, $comment)) {
-			// 	}
-			// }
-			?>
 
 		</div>
 		</form>
@@ -374,7 +436,7 @@ $result = mysqli_query($conn, $sql);
 
 		while ($bl = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
-			echo '<a class="" style="text-decoration: underline; font-size:20px;" href="show_book_list.php?list_id=' . $bl['series_id'] . '">';
+			echo '<a class="" style="text-decoration: underline; font-size:20px;" href="show_book_series.php?series_id=' . $bl['series_id'] . '">';
 			echo $bl['series_name'];
 			echo '</a>';
 			echo '<br>';
