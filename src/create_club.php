@@ -6,9 +6,6 @@
 		header('Location: index.php');
 	}
 
-	print_r($_POST);
-	print_r($_COOKIE);
-
 	require('template/header.php');
 
 
@@ -25,12 +22,6 @@
 	} else {
 		$club_title = "";
 	}
-
-	// if (isset($_POST['book_id'])) {
-	// 	$book_id = $_POST['book_id'];
-	// } else {
-	// 	$book_id = "";
-	// }
 
 	// HANDLE POST REQUESTS HERE
 	$errors = array('club_title' => '');
@@ -60,8 +51,6 @@
 				header("Location: club_page.php?club_id=$result");
 			}
 		}
-	} else {
-		echo "GIRMIYO";
 	}
 ?>
 

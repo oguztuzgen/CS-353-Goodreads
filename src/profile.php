@@ -49,7 +49,11 @@ if (isset($_POST['remove'])) {
 	header("Location: profile.php?uid=$uid");
 }
 ?>
-
+<?php 
+if(isset($_POST['report'])){
+	header("Location: user_error.php?user_id=$uid");
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -101,25 +105,32 @@ if (isset($_POST['remove'])) {
 		echo $info['karma'] . " karma";
 		echo '</h5>';
 		?>
+		<div class="row">
+			<div class="col">
+				<?php
 
-		<?php
-
-		if (!isset($_SESSION['user_id'])) {
-			// DO NOTHING
-		} else if ($_SESSION['user_id'] == $uid) { // if logged in user
-			echo "
-				<div class=\"col\">
+				if (!isset($_SESSION['user_id'])) {
+					// DO NOTHING
+				} else if ($_SESSION['user_id'] == $uid) { // if logged in user
+					echo "
 					<input type=\"submit\" name=\"edit_profile\" class=\"btn brand-btn\" value=\"Edit Profile\">
-				</div>
-			";
-		} else if (isset($_SESSION['user_id'])) { // if not the logged in user
-			echo "
+				";
+				} else if (isset($_SESSION['user_id'])) { // if not the logged in user
+					echo "
 				<div class=\"col\">
 					<input type=\"submit\" name=\"friend\" class=\"btn brand-btn\" value=\"Add Friend\">
 				</div>
-			";
-		}
-		?>
+				";
+				}
+				?>
+			</div>
+
+			<div class="col">
+				<?php if ($_SESSION['user_id'] == $uid) { ?>
+					<input type="submit" name="report" class="btn brand-btn red lighten-1" value="Report User">
+				<?php } ?>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -141,11 +152,15 @@ if (isset($_POST['remove'])) {
 		echo '</div>';
 		echo '<h6>' . $friend['first_name'] . " " . $friend['last_name'] . "</h6>";
 	?>
-		<form action="" method="POST">
-			<input type="hidden" value="<?php echo $friend['friend_id']; ?>" name="fr_id">
+		<?php
+		if ($_SESSION['user_id'] == $uid) {
+		?>
+			<form action="" method="POST">
+				<input type="hidden" value="<?php echo $friend['friend_id']; ?>" name="fr_id">
 
-			<input type="submit" class="btn" value="Remove Friend" name="remove">
-		</form>
+				<input type="submit" class="btn" value="Remove Friend" name="remove">
+			</form>
+		<?php } ?>
 	<?php
 		echo '</div>';
 	}

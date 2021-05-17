@@ -64,7 +64,9 @@ if (isset($_POST['add_fren'])) {
       <?php $prof = $inf['profile_picture'];
       $id = $inf['user_id'];
       echo "<img src=\"$prof\" data-id=\"'.$id.\"  width=\"150\" height=\"150\" onerror=this.src='../image/profile_placeholder.jpg'>"; ?>
-      <?php echo htmlspecialchars($inf['first_name']) . " " . htmlspecialchars($inf['last_name']); ?>
+
+      <a href="profile.php?uid=<?php echo $id ?>"> <?php echo htmlspecialchars($inf['first_name']) . " " . htmlspecialchars($inf['last_name']) ?>  </a>
+      
 
       <form method="POST" style="padding: 10px;">
         <input type="hidden" value="<?php echo $id; ?>" name="frenId">

@@ -1,5 +1,5 @@
 <?php
-// error_reporting(0);
+error_reporting(0);
 require('style.php');
 require('config.php');
 
@@ -19,7 +19,7 @@ if (isset($_SESSION['user_id']))
 			echo "<li><a href=\"addfriend.php?uid=$uid\" class=\"nav-btn\">Friends</a></li>";
 			echo "<li><a href=\"friend_requests.php?uid=$uid\" class=\"nav-btn\">Friend Requests</a></li>";
 			echo "<li><a href=\"create_book_list.php?uid=$uid\" class=\"nav-btn\">Create a new book list</a></li>";
-	}
+		}
 		echo "<li><a href=\"reading_challenges.php\" class=\"nav-btn\">Reading Challenges</a></li>";
 		echo "<li><a href=\"create_club.php\" class=\"nav-btn\">Form a book club</a></li>";
 		echo "<li><a href=\"logout.php\" id=\"logout\" class=\"nav-btn\">Log out</a></li>";
@@ -56,8 +56,8 @@ if (isset($_SESSION['user_id']))
 				if (isset($_SESSION['name'])) { // ! ALSO HERE LOG IN INFO IS CHECKED
 					$this_file = htmlspecialchars('<?php echo $_SERVER["PHP_SELF"];?>');
 					echo "<li><a href=\"my_books.php\" class=\"nav-btn\">My Books</a></li>";
-					if(isset($_SESSION['author'])){
-					echo "<li><a href=\"book_upload.php\" class=\"nav-btn\">Upload a book</a></li>";
+					if ($_SESSION['isAdmin'] == 0 &&  $_SESSION['author'] == 1) {
+						echo "<li><a href=\"book_upload.php\" class=\"nav-btn\">Upload a book</a></li>";
 					}
 				}
 				?>

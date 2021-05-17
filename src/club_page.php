@@ -1,5 +1,5 @@
 <?php
-	// error_reporting(0);
+	error_reporting(0);
 	require('template/config.php');
 	require('template/header.php');
 
@@ -13,6 +13,7 @@
 	}
 
 	$club_id = $_GET['club_id'];   
+    $user_id = $_SESSION['user_id'];
 
     
 ?>
@@ -35,6 +36,7 @@
                 }
                 $sql1 = "SELECT * FROM book_club WHERE club_id = '$club_id'";
                 if ($res1 = mysqli_query($conn, $sql1)) {
+                   
                     $result1 = mysqli_fetch_array($res1, MYSQLI_ASSOC);
                     echo " <h1>" .$result1["name"]. "</h1>";
                     $sql2 = "SELECT book_cover FROM book WHERE book_id =(SELECT book_id FROM book_club WHERE club_id = $club_id)";
@@ -67,21 +69,47 @@
                 
                 
             <?php endforeach ?>
+            
+            <div class="col s8 blue lighten-2 vertical-align text center-align" style="border: 3px solid black; padding: 5px;">    
+                <form action="" method="POST" >   
+                    <input type="text" placeholder="Enter Your Comment..." class="text" name="reviewBox">
+                    <input type="submit" name="comment" class="btn blue lighten-1" value="Post Comment" style="margin:auto">
+                    
+                </form> 
+                <?php   
+                    if (isset($_POST['comment'])) {
+                        $sqlid = "SELECT MAX(post_id) as max FROM bc_post";
+                        $resId = mysqli_query($conn, $sqlid);
+                        $resultId = mysqli_fetch_array($resId, MYSQLI_ASSOC);
+                        $maxId = $resultId['max'];
+                        $maxId = $maxId + 1;
+                        //echo "<h1>".$maxId."<\h1>";
+                        $cmt = $_POST['reviewBox'];
+                        $sql5 = "INSERT INTO bc_post(post_id, content) VALUES ( ' .$maxId. ' , ' .$cmt. ')";
+                        if(mysqli_query($conn,$sql5)){
+                            //echo "Query created"; 
+                        }
+                        else{
+                           // echo "Error in insert";
+                        }
 
-            <input type="text" placeholder="Enter Your Comment..." class="text" name="reviewBox">
-            <input type="submit" name="comment" class="btn blue lighten-1" value="Submit Review" style="margin:auto">
-            <?php if (isset($_POST['comment'])) {
-                    $maxid = max($result["post_id"]) + 1;
-                    $sql5 = "INSERT INTO bc_post(post_id, content) values (".$maxid." , " . $_POST['reviewBox'] . ")";
-                    if ($conn->query($sql5) === TRUE) {
-                        echo "New record created successfully";
-                      } else {
-                        echo "Error: " . $sql5 . "<br>" . $conn->error;
-                      }
-
-                }
-            ?>
-
+                        $sql6 = "INSERT INTO bc_post_belongs(bc_id, post_id) VALUES ( '.$club_id.', '.$maxId.')";
+                        if(mysqli_query($conn,$sql6)){
+                            //echo "Query created"; 
+                        }
+                        else{
+                            //echo "Error in insert";
+                        }
+                        $sql7 = "INSERT INTO posts(post_id, user_id) VALUES('.$maxId.', '.$user_id.') ";
+                        if(mysqli_query($conn,$sql7)){
+                            //echo "Query created"; 
+                        }
+                        else{
+                            //echo "Error in insert";
+                        }
+                    }
+                ?>
+            </div>
 
 		</div>
     

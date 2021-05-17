@@ -64,10 +64,12 @@ if (isset($_POST['comment'])) {
 // 	if (mysqli_query($conn, $comment)) {
 // 	}
 // }
+if ($_SESSION['isAdmin'] == 0) {
+	$check = "select COUNT(book_id) from read_list where book_id = " . $book_id . " and user_id = " . $_SESSION['user_id'] . " ;";
+	$res11 = mysqli_query($conn, $check);
+	$wanted = mysqli_fetch_array($res11);
+}
 
-$check = "select COUNT(book_id) from read_list where book_id = " . $book_id . " and user_id = " . $_SESSION['user_id'] . " ;";
-$res11 = mysqli_query($conn, $check);
-$wanted = mysqli_fetch_array($res11);
 
 ?>
 <?php
@@ -147,15 +149,23 @@ if (isset($_POST['recomend'])) {
 
 				</div>
 				<div class="col" style="padding:10px;">
-					<?php if ($wanted['COUNT(book_id)'] == 0) { ?>
+					<?php if ($_SESSION['isAdmin'] == 0  && $wanted['COUNT(book_id)'] == 0) { ?>
 						<form action="" method="POST">
 							<input type="submit" name="addToWant" class="btn" value="Add to Want to Read List">
 						</form>
 					<?php } ?>
-						<div style="padding:10px;"></div>
-					<?php if ($_SESSION['login'] == 1) { ?>
+
+					<div style="padding:10px;"></div>
+					<?php if ($_SESSION['login'] == 1 && $_SESSION['isAdmin'] == 0) { ?>
 						<form action="" method="POST">
 							<input type="submit" name="recomend" class="btn" value="Recommend This Book">
+						</form>
+					<?php } ?>
+
+					<div style="padding:10px;height:10px;"></div>
+					<?php if ($_SESSION['login'] == 1 && $_SESSION['isAdmin'] == 0) { ?>
+						<form action="fill_error.php?book_id=<?php echo $book_id; ?>" method="POST">
+							<input type="submit" name="error" class="btn red lighten-2" value="Send Error Report About This Book">
 						</form>
 					<?php } ?>
 				</div>
@@ -163,69 +173,75 @@ if (isset($_POST['recomend'])) {
 			</div>
 		</div>
 
-		<div class="row text blue lighten-4" style="padding: 30px; width:90%;">
+		<?php if ($_SESSION['isAdmin'] == 0) { ?>
+			<div class="row text blue lighten-4" style="padding: 30px; width:90%;">
 
-			<div class="col s3" style="border: 3px solid black; text-align:left;">
-				<p>Your Rating:</p>
+				<div class="col s3" style="border: 3px solid black; text-align:left;">
+					<p>Your Rating:</p>
 
-				<div class="left-align">
+					<div class="left-align">
 
-					<div class="rating left-align">
-						<span><input type="radio" name="rating" id="str5" value="5"><label for="str5"></label></span>
-						<span><input type="radio" name="rating" id="str4" value="4"><label for="str4"></label></span>
-						<span><input type="radio" name="rating" id="str3" value="3"><label for="str3"></label></span>
-						<span><input type="radio" name="rating" id="str2" value="2"><label for="str2"></label></span>
-						<span><input type="radio" name="rating" id="str1" value="1"><label for="str1"></label></span>
-					</div>
+						<div class="rating left-align">
+							<span><input type="radio" name="rating" id="str5" value="5"><label for="str5"></label></span>
+							<span><input type="radio" name="rating" id="str4" value="4"><label for="str4"></label></span>
+							<span><input type="radio" name="rating" id="str3" value="3"><label for="str3"></label></span>
+							<span><input type="radio" name="rating" id="str2" value="2"><label for="str2"></label></span>
+							<span><input type="radio" name="rating" id="str1" value="1"><label for="str1"></label></span>
+						</div>
 
-					<script>
-						$(document).ready(function() {
-							$(".rating input:radio").attr("checked", false);
+						<script>
+							$(document).ready(function() {
+								$(".rating input:radio").attr("checked", false);
 
-							$('.rating input').click(function() {
-								$(".rating span").removeClass('checked');
-								$(this).parent().addClass('checked');
-							});
-
-							document.cookie = "rating=" + 0;
-							$('input:radio').change(
-								function() {
-									var userRating = this.value;
-									document.cookie = "rating=" + userRating;
+								$('.rating input').click(function() {
+									$(".rating span").removeClass('checked');
+									$(this).parent().addClass('checked');
 								});
-						});
-					</script>
+
+								document.cookie = "rating=" + 0;
+								$('input:radio').change(
+									function() {
+										var userRating = this.value;
+										document.cookie = "rating=" + userRating;
+									});
+							});
+						</script>
+					</div>
+				</div>
+				<div class="col s1">
+
+				</div>
+				<div class="col s8 blue lighten-2 vertical-align text center-align" style="border: 3px solid black; padding: 5px;">
+					<form action="" method="POST">
+						<input type="text" placeholder="Enter Your Rating Description..." class="text" name="reviewBox">
+
+						<input type="submit" name="baban" class="btn blue lighten-1" value="Submit Review" style="margin:auto">
+					</form>
+
+
+					<br>
+					<?php // insertion to database
+					if (isset($_POST['baban'])) {
+
+						$sql = "insert into review (content, rating) values ('" . $_POST['reviewBox'] . "', " . $_COOKIE["rating"] . ");";
+						if (mysqli_query($conn, $sql)) {
+							//echo 'za';
+						}
+
+						$sql = "select max(review_id)
+                from review;";
+						$res = mysqli_query($conn, $sql);
+						$rev_id = mysqli_fetch_array($res, MYSQLI_ASSOC);
+
+						$sql = "insert into reviews(review_id, user_id, book_id) values (" . $rev_id['max(review_id)'] . ", " . $_SESSION['user_id'] . "," . $book_id . ");";
+						if (mysqli_query($conn, $sql)) {
+							//echo 'succesful insertion';
+						}
+					}
+					?>
 				</div>
 			</div>
-			<div class="col s1">
-
-			</div>
-			<div class="col s8 blue lighten-2 vertical-align text center-align" style="border: 3px solid black; padding: 5px;">
-
-				<input type="text" placeholder="Enter Your Rating Description..." class="text" name="reviewBox">
-				<input type="submit" name="baban" class="btn blue lighten-1" value="Submit Review" style="margin:auto">
-				<br>
-				<?php // insertion to database
-				if (isset($_POST['baban'])) {
-
-					$sql = "insert into review (content, rating) values ('" . $_POST['reviewBox'] . "', " . $_COOKIE["rating"] . ");";
-					if (mysqli_query($conn, $sql)) {
-						//echo 'za';
-					}
-
-					$sql = "select max(review_id)
-                from review;";
-					$res = mysqli_query($conn, $sql);
-					$rev_id = mysqli_fetch_array($res, MYSQLI_ASSOC);
-
-					$sql = "insert into reviews(review_id, user_id, book_id) values (" . $rev_id['max(review_id)'] . ", " . $_SESSION['user_id'] . "," . $book_id . ");";
-					if (mysqli_query($conn, $sql)) {
-						//echo 'succesful insertion';
-					}
-				}
-				?>
-			</div>
-		</div>
+		<?php } ?>
 
 		<div class="row text blue lighten-4" style="padding: 10px; width:90%; border: 3px solid red;">
 

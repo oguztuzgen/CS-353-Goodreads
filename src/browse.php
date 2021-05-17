@@ -20,7 +20,7 @@ require('template/config.php');
 
 	<div>
 		<div class="row">
-			<div class="col s6 center" style="background: #AAD5FF">
+			<div class="col s4 center" style="background: #AAD5FF">
 				<h2>Book Lists</h2>
 				
 				<?php 
@@ -48,10 +48,10 @@ require('template/config.php');
 									// isset() => setlenmemis assoc array elemani
 									// empty() => bos liste
 									if(!isset($result1['book_cover'])) {
-											echo  "<a href = \"show_book_list.php?list_id=$list_id\" ><img src=\"../image/cover_placeholder.png\" width=\"300\" height=\"405\" alt= \"No image\"> ";
+											echo  "<a href = \"show_book_list.php?list_id=$list_id\" ><img src=\"../image/cover_placeholder.png\" width=\"200\" height=\"270\" alt= \"No image\"> ";
 									}
 									else {
-											echo "<a href = \"show_book_list.php?list_id=$list_id\" ><img src=\"" .$result1["book_cover"]. "\"  width=\"300\" height=\"405\"  alt= \"No image\"> ";
+											echo "<a href = \"show_book_list.php?list_id=$list_id\" ><img src=\"" .$result1["book_cover"]. "\"  width=\"200\" height=\"270\"  alt= \"No image\"> ";
 									}
 									
 									
@@ -66,7 +66,7 @@ require('template/config.php');
 													}
 				?>
 			</div>
-			<div class="col s6 center " style="background: #AAD5FF">
+			<div class="col s4 center " style="background: #AAD5FF">
 					<?php
 						$sql = "SELECT series_id, series_name, b.book_cover as series_cover FROM series, book b WHERE b.book_id = origin_id";
 						$result = mysqli_query($conn, $sql);
@@ -88,7 +88,7 @@ require('template/config.php');
 					
 											echo "
 												<tr>
-												<td><a href=\"show_book_series.php?series_id=$series_id\"><img src=\"$series_img\" width=\"300\" height=\"405\"></a></td>
+												<td><a href=\"show_book_series.php?series_id=$series_id\"><img src=\"$series_img\" width=\"200\" height=\"270\"></a></td>
 												<td></td>
 												<td style=\"width: 300px;\"><h4 class=\"left\"><a href=\"show_book_series.php?series_id=$series_id\">$series_name</a></h4></td>
 												</tr>
@@ -101,6 +101,51 @@ require('template/config.php');
 							";
 					?>
 						
+			</div>
+			<div class="col s4 center" style="background: #AAD5FF">
+				<h2>Book Clubs</h2>
+				
+				<?php
+					$sql = "SELECT bc.club_id, bc.name, bc.member_count, b.book_cover FROM book_club bc, book b WHERE b.book_id = bc.book_id";
+
+					$result = mysqli_query($conn, $sql);
+					$result = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+					echo "
+								<table>
+									<thead>
+										<th></th>
+										<th></th>
+										<th><h3>Name</h3></th>
+										<th><h3>Count</h3></th>
+									</thead>
+
+									<tbody>
+									";
+										foreach ($result as $ser) {
+											echo "<pre>";
+												print_r($ser);
+											echo "</pre>";
+											$series_id = $ser['name'];
+											$series_name = $ser['member_count'] ?? 0;
+											$series_img = $ser['book_cover'];
+											$club_id = $ser['club_id'];
+					
+											echo "
+												<tr>
+												<td><a href=\"club_page.php?club_id=$club_id\"><img src=\"$series_img\" width=\"200\" height=\"270\"></a></td>
+												<td><a href=\"club_page.php?club_id=$club_id\"><h4>$series_id</h4></a></td>
+												<td></td>
+												<td style=\"width: 300px;\"><h4 class=\"left\"><a href=\"club_page.php?club_id=$club_id\">$series_name</a></h4></td>
+												</tr>
+											";
+										}
+										
+							echo "
+									</tbody>
+								</table>
+							";
+				?>
 			</div>
 		</div>
 	</div>
